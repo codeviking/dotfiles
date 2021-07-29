@@ -44,6 +44,9 @@ require('packer').startup(function()
   use { 'iamcco/markdown-preview.nvim', run = 'cd app & yarn install' }
 end)
 
+-- Use the bash shell, since fish isn't POSIX compliant
+vim.o.shell = "/bin/bash"
+
 -- Filetype plugin
 vim.cmd [[filetype plugin on]]
 
