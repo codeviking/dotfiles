@@ -13,8 +13,15 @@ To setup a new environment:
 
 ```bash
 git clone git@github.com:codeviking/dotfiles.git
+
+# Install common packages.
 bash install.sh
+
+# Initialize user specific config.
 bash bootstrap.sh
+
+# Change the default shell to fish.
+chsh -s /usr/local/bin/fish
 ```
 
 Once those steps are done launch a new terminal. You should now see
