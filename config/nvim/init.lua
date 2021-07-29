@@ -42,7 +42,13 @@ require('packer').startup(function()
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
   use 'ntpeters/vim-better-whitespace' -- Highlight and remove trailing whitespace
   use { 'iamcco/markdown-preview.nvim', run = 'cd app & yarn install' }
+  use 'google/vim-jsonnet' -- jsonnet syntax highlighting and formatting
 end)
+
+-- Disable the jsonnet format command by using a no-op in it's place, otherwise
+-- it formats onsave, and most of our jsonnet isn't formatted according to the
+-- tools defaults.
+vim.cmd [[let g:jsonnet_fmt_command="ls /dev/null" ]]
 
 -- Use the bash shell, since fish isn't POSIX compliant
 vim.o.shell = "/bin/bash"

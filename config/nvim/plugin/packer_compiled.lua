@@ -137,6 +137,10 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/sams/.local/share/nvim/site/pack/packer/start/vim-fugitive"
   },
+  ["vim-jsonnet"] = {
+    loaded = true,
+    path = "/Users/sams/.local/share/nvim/site/pack/packer/start/vim-jsonnet"
+  },
   ["vim-rhubarb"] = {
     loaded = true,
     path = "/Users/sams/.local/share/nvim/site/pack/packer/start/vim-rhubarb"
