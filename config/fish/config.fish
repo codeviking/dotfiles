@@ -13,8 +13,13 @@ set -x EDITOR nvim
 set -x LANG en_US.UTF-8
 
 # PATH munging
-set -x GOPATH $HOME/go
-set -x PATH $PATH:$HOME/go/bin
+set -x GOPATH "$HOME/go"
+set -x PATH "$PATH:$HOME/go/bin"
+
+# The parent directory of this script
+set dir (cd (dirname (status -f)); and pwd)
+set -x PATH "$PATH:$dir/../../bin"
 
 # gpg
 set -x GPG_TTY (tty)
+
