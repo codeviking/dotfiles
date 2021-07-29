@@ -38,3 +38,27 @@ error about a missing theme. Then:
 
 That's it. You're all set!
 
+## Advanced
+
+### Host Specific PATH Extensions
+
+As much as we'd like to avoid it, host-specific `$PATH` extensions are at 
+times warranted.
+
+To set host specific `$PATH` extensions create a file at the path
+`$HOME/.config/paths.fish` that looks something like this:
+
+```fish
+#!/bin/fish
+
+# gcloud
+source "$HOME/lib/google-cloud-sdk/paths.fish.inc"
+
+set -x "$PATH:$HOME/bin"
+```
+
+The commands above are examples, populate the file with the `$PATH` specific 
+changes that make sense for the host you're on.
+
+
+
