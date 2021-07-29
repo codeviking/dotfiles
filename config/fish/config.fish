@@ -16,5 +16,5 @@ set -x LANG en_US.UTF-8
 set -x GOPATH $HOME/go
 set -x PATH $PATH:$HOME/go/bin
 
-# GPG
+# gpg
 set -x GPG_TTY (tty)
