@@ -43,6 +43,7 @@ require('packer').startup(function()
   use 'ntpeters/vim-better-whitespace' -- Highlight and remove trailing whitespace
   use { 'iamcco/markdown-preview.nvim', run = 'cd app & yarn install' }
   use 'google/vim-jsonnet' -- jsonnet syntax highlighting and formatting
+  use 'dag/vim-fish' -- syntax highlighting for fish files
 end)
 
 -- Disable the jsonnet format command by using a no-op in it's place, otherwise

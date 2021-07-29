@@ -133,6 +133,10 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/sams/.local/share/nvim/site/pack/packer/start/vim-commentary"
   },
+  ["vim-fish"] = {
+    loaded = true,
+    path = "/Users/sams/.local/share/nvim/site/pack/packer/start/vim-fish"
+  },
   ["vim-fugitive"] = {
     loaded = true,
     path = "/Users/sams/.local/share/nvim/site/pack/packer/start/vim-fugitive"
