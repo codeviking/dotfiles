@@ -10,15 +10,23 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 for src in $dir/config/*; do
     pkg=$(basename "$src")
     target="$HOME/.config/$pkg"
-    if [[ ! -f "$target" ]]; then
+
+    # If it's not a symlink...
+    if [[ ! -L "$target" ]]; then
+
+        # ...and it's a file or directory back it up first
+        if [[ -f "$target" ]] || [[ -d "$target" ]]; then
+            echo "making a backup of $target..."
+            backup=$HOME/.config/$pkg-dotfiles-backup-$(date +%s)
+            mv "$target" "$backup"
+            echo "backed up $target to $backup..."
+        fi
+
         ln -s "$src" "$target"
         echo "wrote link $target ~> $src..."
     else
-        echo "skipping $HOME/.config/$pkg because it already exists..."
+        echo "$target already exists and is a symlink, skipping..."
     fi
 done
-
-# Install nvim plugins
-nvim --headless -c 'autocmd User PackerComplete quitall' -c ':PackerSync'
 
 echo "bootstrap complete"

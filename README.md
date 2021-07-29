@@ -1,4 +1,4 @@
-# @codeviking's dotfiles
+ @codeviking's dotfiles
 
 This repository captures what's required to configure my development
 environment.
@@ -29,7 +29,12 @@ something like this:
 
 ![Screenshot of the configured TTY](tty.png)
 
-There's one more step to get things running. Launch `nvim` and type 
-`<leader>tsi` to install the language grammars required for 
-[nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter).
+There's one more step to get things running. Launch `nvim` and dismiss the
+error about a missing theme. Then:
+
+1. Run the `:PackerSync` to install the `nvim` plugins.
+1. Type `<leader>tsi` to install the language grammars required for
+   [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter).
+
+That's it. You're all set!
 
