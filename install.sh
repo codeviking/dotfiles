@@ -7,7 +7,6 @@ set -eu
 #
 # If we're on MacOS use brew to install a bunch of packages.
 #
-
 if [[ "$(uname)" == "Darwin" ]]; then
     if !command -v brew &> /dev/null; then
         echo "Error: brew isn't installed."
@@ -64,13 +63,17 @@ npm install -g dockerfile-language-server-nodejs
 # myself as much as possible to python2.
 #
 npm install -g neovim
-python3 -m pip --user install pynvim
+python3 -m pip install --user pynvim
 
 #
 # Install oh-my-fish
 #
 curl -L https://get.oh-my.fish > /tmp/install.fish
-sha256sum -c "bb1f4025934600ea6feef2ec11660e17e2b6449c5a23c033860aed712ad328c9 /tmp/install.fish"
-fish install /tmp/install.fish --path ~/.local
+echo "bb1f4025934600ea6feef2ec11660e17e2b6449c5a23c033860aed712ad328c9  /tmp/install.fish" \
+    | sha256sum --check
+fish /tmp/install.fish -y --noninteractive
+
+# Install the pure theme.
+fish -c "omf install pure"
 
 echo "install complete"
