@@ -16,9 +16,9 @@ set -x LANG en_US.UTF-8
 set -x GOPATH "$HOME/go"
 set -x PATH "$PATH:$HOME/go/bin"
 
-# The parent directory of this script
-set dir (cd (dirname (status -f)); and pwd)
-set -x PATH "$PATH:$dir/../../bin"
+# Add the binaries included in this repository to the $PATH
+set pdir (realpath (dirname (status --current-filename)))
+set -x PATH "$PATH:$pdir/../../bin"
 
 # gpg
 set -x GPG_TTY (tty)

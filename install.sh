@@ -21,10 +21,14 @@ if [[ "$(uname)" == "Darwin" ]]; then
         "fish"
         "node@16"
         "kubectl"
+        "fzf"
+        "ripgrep"
     )
     for pkg in "${pkgs[@]}"; do
         brew install "$pkg"
     done
+
+    $(brew --prefix)/opt/fzf/install
 else
     # TODO: Add equivalent commands for other operating systems
     echo "Warning: The host os isn't MacOS, some packages won't be installed"
