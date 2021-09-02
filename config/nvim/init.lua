@@ -27,23 +27,19 @@ require('packer').startup(function()
   use 'tpope/vim-commentary' -- "gc" to comment visual regions/lines
   use 'joshdick/onedark.vim' -- Theme inspired by Atom
   use 'itchyny/lightline.vim' -- Fancier statusline
-  -- Add indentation guides even on blank lines
-  use 'lukas-reineke/indent-blankline.nvim'
-  -- Add git related info in the signs columns and popups
-  use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  -- Highlight, edit, and navigate code using a fast incremental parsing library
-  use 'nvim-treesitter/nvim-treesitter'
-  -- Additional textobjects for treesitter
-  use 'nvim-treesitter/nvim-treesitter-textobjects'
+  use 'lukas-reineke/indent-blankline.nvim' -- Indentation guides on blank lines too
+  use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Signs and popups for git
+  use 'nvim-treesitter/nvim-treesitter' -- Highlight, edit and navigate code
+  use 'nvim-treesitter/nvim-treesitter-textobjects' -- Additional textobjects for treesitter
   use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
   use 'hrsh7th/nvim-compe' -- Autocompletion plugin
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
   use 'ntpeters/vim-better-whitespace' -- Highlight and remove trailing whitespace
-  use { 'iamcco/markdown-preview.nvim', run = 'cd app & yarn install' }
-  use 'google/vim-jsonnet' -- jsonnet syntax highlighting and formatting
-  use 'dag/vim-fish' -- syntax highlighting for fish files
-  use { 'junegunn/fzf', run = 'fzf#install()' } -- fzf for fuzzy-finding things
-  use 'junegunn/fzf.vim' -- fzf vim bindings
+  use { 'iamcco/markdown-preview.nvim', run = 'cd app & yarn install' } -- Preview markdown files
+  use 'google/vim-jsonnet' -- Jsonnet syntax highlighting and formatting
+  use 'dag/vim-fish' -- Syntax highlighting for fish files
+  use { 'junegunn/fzf', run = 'fzf#install()' } -- A fuzzy file finder
+  use 'junegunn/fzf.vim' -- Bindinds for fzf
 end)
 
 -- Disable the jsonnet format command by using a no-op in it's place, otherwise
@@ -187,6 +183,58 @@ for _, lsp in ipairs(servers) do
     capabilities = capabilities,
   }
 end
+
+-- Format .go files on save
+vim.api.nvim_exec(
+  [[
+    augroup FormatGoFileOnSave
+      autocmd!
+      autocmd BufWritePre *.go lua vim.lsp.buf.formatting()
+    augroup end
+  ]],
+  false
+)
+
+_G.goimports = function(timeout_ms)
+  local context = { only = { "source.organizeImports" } }
+  vim.validate { context = { context, "t", true } }
+
+  local params = vim.lsp.util.make_range_params()
+  params.context = context
+
+  -- See the implementation of the textDocument/codeAction callback
+  -- (lua/vim/lsp/handler.lua) for how to do this properly.
+  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, timeout_ms)
+  if not result or next(result) == nil then return end
+  local actions = result[1].result
+  if not actions then return end
+  local action = actions[1]
+
+  -- textDocument/codeAction can return either Command[] or CodeAction[]. If it
+  -- is a CodeAction, it can have either an edit, a command or both. Edits
+  -- should be executed first.
+  if action.edit or type(action.command) == "table" then
+    if action.edit then
+      vim.lsp.util.apply_workspace_edit(action.edit)
+    end
+    if type(action.command) == "table" then
+      vim.lsp.buf.execute_command(action.command)
+    end
+  else
+    vim.lsp.buf.execute_command(action)
+  end
+end
+
+-- Organize goimports on save
+vim.api.nvim_exec(
+  [[
+    augroup OrganizeGoImportsOnSave
+      autocmd!
+      autocmd BufWritePre *.go lua goimports(1000)
+    augroup end
+  ]],
+  false
+)
 
 -- Treesitter configuration
 -- Parsers must be installed manually via <leader>tsi
