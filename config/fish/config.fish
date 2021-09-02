@@ -23,3 +23,6 @@ set -x PATH "$PATH:$pdir/../../bin"
 # gpg
 set -x GPG_TTY (tty)
 
+# conda
+eval conda "shell.fish" "hook" $argv | source
+
