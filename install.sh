@@ -23,6 +23,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         "kubectl"
         "fzf"
         "ripgrep"
+        "mosh"
     )
     for pkg in "${pkgs[@]}"; do
         brew install "$pkg"
@@ -79,5 +80,10 @@ fish /tmp/install.fish -y --noninteractive
 
 # Install the pure theme.
 fish -c "omf install pure"
+
+#
+# Global pip utilities
+#
+pip3 install --user yq
 
 echo "install complete"
