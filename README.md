@@ -20,6 +20,9 @@ bash install.sh
 # Initialize user specific config.
 bash bootstrap.sh
 
+# Initialize GPG
+bash gpg.sh
+
 # Change the default shell to fish.
 chsh -s /usr/local/bin/fish
 ```
@@ -59,6 +62,4 @@ set -x "$PATH:$HOME/bin"
 
 The commands above are examples, populate the file with the `$PATH` specific 
 changes that make sense for the host you're on.
-
-
 
