@@ -40,6 +40,7 @@ require('packer').startup(function()
   use 'dag/vim-fish' -- Syntax highlighting for fish files
   use { 'junegunn/fzf', run = 'fzf#install()' } -- A fuzzy file finder
   use 'junegunn/fzf.vim' -- Bindinds for fzf
+  use 'Glench/Vim-Jinja2-Syntax' -- Jinja syntax highlighting
 end)
 
 -- Disable the jsonnet format command by using a no-op in it's place, otherwise
