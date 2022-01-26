@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+import argparse
+import subprocess
+import shlex
+
+def clean_branches():
+    current_branch = subprocess.check_output(
+        shlex.split("git rev-parse --abbrev-ref HEAD"),
+        encoding="utf-8"
+    ).strip()
+    branches = subprocess.check_output(
+        shlex.split("git branch --format %(refname:short)"),
+        encoding="utf-8"
+    ).strip().split("\n")
+    delete_branches = [ b for b in branches if b != current_branch ]
+    if delete_branches == 0:
+        print("no branches to remove")
+        exit(1)
+
+    print(f"{len(delete_branches)} branches will be removed:\n")
+    for b in delete_branches:
+        print(f"  {b}")
+    try:
+        input("\nhit enter to proceed or ctrl^c to cancel...\n")
+        for b in delete_branches:
+            subprocess.check_call(shlex.split(f"git branch -D {b}"))
+        print("\n ok: done")
+    except KeyboardInterrupt:
+        print("\nno action taken")
+        exit(0)
+
+
+def clean(args: argparse.Namespace):
+    if args.target == "branches":
+        clean_branches()
+        return
+    raise RuntimeError("invalid target")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(prog="gitkit", description="a collection of git utilities")
+
+    sub = parser.add_subparsers(title="command", help="the command to run")
+
+    clean_cmd = sub.add_parser("clean")
+
+    targets = [ "branches" ]
+    clean_cmd.add_argument("target", choices=targets, help="the thing to clean")
+    clean_cmd.set_defaults(func=clean)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+
+
