@@ -7,6 +7,7 @@ set -eu
 # See: https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
+# symlink ~/.config/$dir all dirs in config
 for src in $dir/config/*; do
     pkg=$(basename "$src")
     target="$HOME/.config/$pkg"
@@ -28,5 +29,8 @@ for src in $dir/config/*; do
         echo "$target already exists and is a symlink, skipping..."
     fi
 done
+
+# symlink things that don't live in ~/.config
+ln -s $dir/tmux/tmux.conf ~/.tmux.conf
 
 echo "bootstrap complete"
