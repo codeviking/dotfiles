@@ -16,6 +16,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     pkgs=(
         "nvim"
         "jq"
+        "yq"
         "python@3.9"
         "go@1.16"
         "fish"
@@ -24,6 +25,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         "fzf"
         "ripgrep"
         "mosh"
+        "1password-cli"
     )
     for pkg in "${pkgs[@]}"; do
         brew install "$pkg"
@@ -80,10 +82,5 @@ fish /tmp/install.fish -y --noninteractive
 
 # Install the pure theme.
 fish -c "omf install pure"
-
-#
-# Global pip utilities
-#
-pip3 install --user yq
 
 echo "install complete"
