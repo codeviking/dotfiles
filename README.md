@@ -1,4 +1,4 @@
- @codeviking's dotfiles
+# @codeviking's dotfiles
 
 This repository captures what's required to configure my development
 environment.
