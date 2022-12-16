@@ -192,22 +192,40 @@ local on_attach = function(_, bufnr)
   vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
 end
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+-- Setup language servers
+-- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 
--- Enable the following language servers
--- See: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md
-local servers = { 'gopls', 'pyright', 'tsserver', 'bashls', 'html', 'cssls', 'jsonls', 'sqls', 'dockerls' }
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-  }
-end
+nvim_lsp.gopls.setup {
+    on_attach = on_attach
+}
 
--- Override the python3 binary to use that installed by brew. This is a bit
--- hacky.
-vim.g.python3_host_prog = '/usr/local/Caskroom/miniconda/base/bin/python'
+nvim_lsp.pyright.setup {
+    on_attach = on_attach
+}
+
+nvim_lsp.tsserver.setup {
+    on_attach = on_attach
+}
+
+nvim_lsp.bashls.setup {
+    on_attach = on_attach
+}
+
+nvim_lsp.html.setup {
+    on_attach = on_attach
+}
+
+nvim_lsp.cssls.setup {
+    on_attach = on_attach
+}
+
+nvim_lsp.jsonls.setup {
+    on_attach = on_attach
+}
+
+nvim_lsp.dockerls.setup {
+    on_attach = on_attach
+}
 
 -- Format .go files on save
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -314,10 +332,9 @@ require('compe').setup {
   source = {
     path = true,
     nvim_lsp = true,
-    luasnip = true,
-    buffer = false,
+    nvim_lua = true,
+    buffer = true,
     calc = false,
-    nvim_lua = false,
     vsnip = false,
     ultisnips = false,
   },
@@ -373,27 +390,6 @@ vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true 
 -- Map compe confirm and complete functions
 vim.api.nvim_set_keymap('i', '<cr>', 'compe#confirm("<cr>")', { expr = true })
 vim.api.nvim_set_keymap('i', '<c-space>', 'compe#complete()', { expr = true })
-
--- A convenience function for installing nvim-treesitter grammars.
-_G.install_ts_grammers = function()
-  langs = {
-    "bash",
-    "css",
-    "go",
-    "html",
-    "json",
-    "javascript",
-    "python",
-    "typescript",
-    "yaml"
-  }
-  for _, lang in pairs(langs) do
-    vim.api.nvim_exec(
-      [[ :TSInstall ]] .. lang,
-      false
-    )
-  end
-end
 
 -- Bind a command to run install_ts_grammers()
 -- TODO: This would be etter as a command, but there's no lua API for

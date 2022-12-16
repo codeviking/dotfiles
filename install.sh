@@ -1,12 +1,8 @@
-#!/bin/sh
-#
+#!/bin/bash
 # Install some required software using brew.
-#
-set -eu
+set -euo pipefail
 
-#
 # If we're on MacOS use brew to install a bunch of packages.
-#
 if [[ "$(uname)" == "Darwin" ]]; then
     if !command -v brew &> /dev/null; then
         echo "Error: brew isn't installed."
@@ -17,18 +13,17 @@ if [[ "$(uname)" == "Darwin" ]]; then
         "nvim"
         "jq"
         "yq"
-        "python@3.9"
-        "go@1.16"
+        "python@3.11"
+        "go@1.19"
+        "node@18"
         "fish"
-        "node@16"
-        "kubectl"
         "fzf"
+        "kubectl"
         "ripgrep"
         "mosh"
-        "1password-cli"
         "blueutil"
-        "miniconda"
         "shellcheck"
+        "curl"
     )
     for pkg in "${pkgs[@]}"; do
         brew install "$pkg"
@@ -40,47 +35,19 @@ else
     echo "Warning: The host os isn't MacOS, some packages won't be installed"
 fi
 
-# Setup conda
-conda init "$(basename "${SHELL}")"
+# Language server installation
+# See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 
-#
-# We install a bunch of language servers, which are used by nvim for syntax
-# highlighting, refactoring and more.
-#
-
-# golang
 go install golang.org/x/tools/gopls@latest
 
-# sql
-go install github.com/lighttiger2505/sqls@latest
+npm install -g pyright \
+               typescript \
+               typescript-language-server \
+               bash-language-server \
+               vscode-langservers-extracted \
+               dockerfile-language-server-nodejs
 
-# python
-npm install -g pyright
-
-# TypeScript
-npm install -g typescript
-npm install -g typescript-language-server
-
-# bash
-npm install -g bash-language-server
-
-# html, css and json
-npm install -g vscode-langservers-extracted
-
-# docker
-npm install -g dockerfile-language-server-nodejs
-
-#
-# These packages allow nvim plugins to use python3 and nodejs.
-# I deliberately don't install the same lib for python2, to avoid coupling
-# myself as much as possible to python2.
-#
-npm install -g neovim
-python3 -m pip install --user pynvim
-
-#
 # Install oh-my-fish
-#
 curl -L https://get.oh-my.fish > /tmp/install.fish
 echo "bb1f4025934600ea6feef2ec11660e17e2b6449c5a23c033860aed712ad328c9  /tmp/install.fish" \
     | sha256sum --check

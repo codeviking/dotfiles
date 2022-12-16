@@ -1,8 +1,6 @@
 #!/bin/bash
-#
 # Installation steps that should be ran interactively.
-#
-set -eu
+set -euo pipefail
 
 # See: https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
