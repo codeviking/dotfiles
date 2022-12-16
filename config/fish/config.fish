@@ -26,20 +26,22 @@ fish_add_path "$pdir/../../bin"
 # TODO: The version we add should be in sync with the version of `python3`.
 fish_add_path "$HOME/Library/Python/3.9/bin"
 
-# brew installed curl (which is newer)
+# Add brew installed things to the PATH
 fish_add_path /usr/local/opt/curl/bin
-
-# brew sometimes puts things here.
+fish_add_path /usr/local/opt/sqlite/bin
 fish_add_path /usr/local/sbin
 
 # gpg
 set -x GPG_TTY (tty)
 
-# conda
-eval conda "shell.fish" "hook" $argv | source
+# gcloud kubectl credentials
+set -x USE_GKE_GCLOUD_AUTH_PLUGIN True
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-eval /opt/miniconda3/bin/conda "shell.fish" "hook" $argv | source
+eval /usr/local/Caskroom/miniconda/base/bin/conda "shell.fish" "hook" $argv | source
 # <<< conda initialize <<<
+
+# Don't use conda's built in PS1 munging, as the omf/pure theme already does so
+conda config --set changeps1 False
 
