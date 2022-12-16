@@ -26,6 +26,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
         "ripgrep"
         "mosh"
         "1password-cli"
+        "blueutil"
+        "miniconda"
+        "shellcheck"
     )
     for pkg in "${pkgs[@]}"; do
         brew install "$pkg"
@@ -36,6 +39,9 @@ else
     # TODO: Add equivalent commands for other operating systems
     echo "Warning: The host os isn't MacOS, some packages won't be installed"
 fi
+
+# Setup conda
+conda init "$(basename "${SHELL}")"
 
 #
 # We install a bunch of language servers, which are used by nvim for syntax
