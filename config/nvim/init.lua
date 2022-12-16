@@ -2,6 +2,10 @@
 -- This was created from this excellent example:
 -- https://github.com/mjlbach/defaults.nvim
 
+-- Enable lua filetype checking, which is much faster
+-- vim.g.do_filetype_lua = 1
+-- vim.g.did_load_filetypes = 0
+
 -- Install packer
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 
@@ -9,15 +13,13 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
 end
 
-vim.api.nvim_exec(
-  [[
-    augroup Packer
-      autocmd!
-      autocmd BufWritePost init.lua PackerCompile
-    augroup end
-  ]],
-  false
-)
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "init.lua",
+  callback = function()
+      vim.api.nvim_command("PackerCompile")
+  end,
+  desc = "compile packer after editing this file"
+})
 
 local use = require('packer').use
 require('packer').startup(function()
@@ -29,7 +31,7 @@ require('packer').startup(function()
   use 'itchyny/lightline.vim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Indentation guides on blank lines too
   use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } } -- Signs and popups for git
-  use 'nvim-treesitter/nvim-treesitter' -- Highlight, edit and navigate code
+  use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- Highlight, edit and navigate code
   use 'nvim-treesitter/nvim-treesitter-textobjects' -- Additional textobjects for treesitter
   use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
   use 'hrsh7th/nvim-compe' -- Autocompletion plugin
@@ -41,6 +43,26 @@ require('packer').startup(function()
   use { 'junegunn/fzf', run = 'fzf#install()' } -- A fuzzy file finder
   use 'junegunn/fzf.vim' -- Bindinds for fzf
   use 'Glench/Vim-Jinja2-Syntax' -- Jinja syntax highlighting
+  use {
+    'folke/trouble.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons' },
+    config = function()
+      require("trouble").setup {
+        -- settings without a patched font or icons
+        icons = false,
+        fold_open = "v",
+        fold_closed = ">",
+        indent_lines = false,
+        signs = {
+            error = "error",
+            warning = "warn",
+            hint = "hint",
+            information = "info"
+        },
+        use_diagnostic_signs = false
+      }
+    end
+  }
 end)
 
 -- Disable the jsonnet format command by using a no-op in it's place, otherwise
@@ -100,7 +122,7 @@ vim.cmd [[colorscheme onedark]]
 vim.g.lightline = {
   colorscheme = 'onedark',
   active = { left = { { 'mode', 'paste' }, { 'gitbranch', 'readonly', 'filename', 'modified' } } },
-  component_function = { gitbranch = 'fugitive#head' },
+  component_function = { gitbranch = 'FugitiveHead' },
 }
 
 -- Remap space as leader key
@@ -134,15 +156,13 @@ require('gitsigns').setup {
 }
 
 -- Highlight on yank
-vim.api.nvim_exec(
-  [[
-    augroup YankHighlight
-      autocmd!
-      autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-    augroup end
-  ]],
-  false
-)
+vim.api.nvim_create_autocmd('TextYankPost', {
+  pattern = '*',
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  desc = 'highlight yanked test'
+})
 
 -- Y yank until the end of line
 vim.api.nvim_set_keymap('n', 'Y', 'y$', { noremap = true })
@@ -165,7 +185,7 @@ local on_attach = function(_, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
@@ -177,7 +197,7 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- Enable the following language servers
 -- See: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md
-local servers = { 'gopls', 'tsserver', 'pyright', 'bashls', 'html', 'cssls', 'jsonls', 'sqls', 'dockerls' }
+local servers = { 'gopls', 'pyright', 'tsserver', 'bashls', 'html', 'cssls', 'jsonls', 'sqls', 'dockerls' }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -185,57 +205,52 @@ for _, lsp in ipairs(servers) do
   }
 end
 
+-- Override the python3 binary to use that installed by brew. This is a bit
+-- hacky.
+vim.g.python3_host_prog = '/usr/local/Caskroom/miniconda/base/bin/python'
+
 -- Format .go files on save
-vim.api.nvim_exec(
-  [[
-    augroup FormatGoFileOnSave
-      autocmd!
-      autocmd BufWritePre *.go lua vim.lsp.buf.formatting()
-    augroup end
-  ]],
-  false
-)
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.go",
+  callback = function()
+    vim.lsp.buf.format()
+  end,
+  desc = "format go code on write"
+})
 
-_G.goimports = function(timeout_ms)
-  local context = { only = { "source.organizeImports" } }
-  vim.validate { context = { context, "t", true } }
+-- Set filetype to html for *.gohtml files
+vim.api.nvim_create_autocmd("BufReadPost", {
+  pattern = "*.gohtml",
+  callback = function()
+      vim.cmd("set filetype=html")
+  end,
+  desc = "set syntax for *.gohtml files to html"
+})
 
+-- https://github.com/golang/tools/blob/master/gopls/doc/vim.md
+function OrgImports(wait_ms)
   local params = vim.lsp.util.make_range_params()
-  params.context = context
-
-  -- See the implementation of the textDocument/codeAction callback
-  -- (lua/vim/lsp/handler.lua) for how to do this properly.
-  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, timeout_ms)
-  if not result or next(result) == nil then return end
-  local actions = result[1].result
-  if not actions then return end
-  local action = actions[1]
-
-  -- textDocument/codeAction can return either Command[] or CodeAction[]. If it
-  -- is a CodeAction, it can have either an edit, a command or both. Edits
-  -- should be executed first.
-  if action.edit or type(action.command) == "table" then
-    if action.edit then
-      vim.lsp.util.apply_workspace_edit(action.edit)
+  params.context = {only = {"source.organizeImports"}}
+  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, wait_ms)
+  for _, res in pairs(result or {}) do
+    for _, r in pairs(res.result or {}) do
+      if r.edit then
+        vim.lsp.util.apply_workspace_edit(r.edit, "UTF-8")
+      else
+        vim.lsp.buf.execute_command(r.command)
+      end
     end
-    if type(action.command) == "table" then
-      vim.lsp.buf.execute_command(action.command)
-    end
-  else
-    vim.lsp.buf.execute_command(action)
   end
 end
 
--- Organize goimports on save
-vim.api.nvim_exec(
-  [[
-    augroup OrganizeGoImportsOnSave
-      autocmd!
-      autocmd BufWritePre *.go lua goimports(1000)
-    augroup end
-  ]],
-  false
-)
+-- -- https://gpanders.com/blog/whats-new-in-neovim-0-7/
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.go",
+  callback = function()
+    OrgImports(1000)
+  end,
+  desc = "auto organiuze go imports"
+})
 
 -- Treesitter configuration
 -- Parsers must be installed manually via <leader>tsi
@@ -384,3 +399,25 @@ end
 -- TODO: This would be etter as a command, but there's no lua API for
 -- doing this right now.
 vim.api.nvim_set_keymap('n', '<leader>tsi', 'v:lua.install_ts_grammers()', { expr = true })
+
+-- Trouble Keybindings
+-- https://github.com/folke/trouble.nvim
+vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>",
+  {silent = true, noremap = true}
+)
+vim.api.nvim_set_keymap("n", "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>",
+  {silent = true, noremap = true}
+)
+vim.api.nvim_set_keymap("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>",
+  {silent = true, noremap = true}
+)
+vim.api.nvim_set_keymap("n", "<leader>xl", "<cmd>Trouble loclist<cr>",
+  {silent = true, noremap = true}
+)
+vim.api.nvim_set_keymap("n", "<leader>xq", "<cmd>Trouble quickfix<cr>",
+  {silent = true, noremap = true}
+)
+vim.api.nvim_set_keymap("n", "gR", "<cmd>Trouble lsp_references<cr>",
+  {silent = true, noremap = true}
+)
+
