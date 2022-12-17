@@ -23,9 +23,6 @@ git clone git@github.com:codeviking/dotfiles.git
 # Link configuration files into expectated locations.
 ./link.sh
 
-# Initialize GPG
-bash gpg.sh
-
 # Add fish as a possible shell by editing `/etc/shells`:
 # + /opt/homebrew/bin/fish
 sudo vim /etc/shells
@@ -46,6 +43,22 @@ list of `nvim` plugins (which includes the theme).
 That's it. You're all set!
 
 ## Advanced
+
+### Commit Signing
+
+I use GPG to sign commits. This repository includes scripts for setting that up.
+
+First, follow [these instructions](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key)
+for generating a new GPG key. Then follow the instructions for adding it to
+GitHub.
+
+Then initialize things locally by running:
+
+```bash
+./gpg.sh
+```
+And finally follow [these steps](https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key)
+for telling git about your signing key.
 
 ### Host Specific PATH Extensions
 
