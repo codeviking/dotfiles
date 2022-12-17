@@ -34,7 +34,8 @@ require('packer').startup(function()
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- Highlight, edit and navigate code
   use 'nvim-treesitter/nvim-treesitter-textobjects' -- Additional textobjects for treesitter
   use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
-  use 'hrsh7th/nvim-compe' -- Autocompletion plugin
+  use 'hrsh7th/nvim-cmp' -- Autocompletion
+  use 'hrsh7th/cmp-nvim-lsp' -- Autocomplete via lsp
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
   use 'ntpeters/vim-better-whitespace' -- Highlight and remove trailing whitespace
   use { 'iamcco/markdown-preview.nvim', run = 'cd app & yarn install' } -- Preview markdown files
@@ -127,9 +128,7 @@ vim.g.lightline = {
 }
 
 -- Remap space as leader key
-vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
 
 -- Disable wrapping
 vim.o.wrap = false
@@ -196,36 +195,46 @@ end
 -- Setup language servers
 -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 nvim_lsp.gopls.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 nvim_lsp.pyright.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 nvim_lsp.tsserver.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 nvim_lsp.bashls.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 nvim_lsp.html.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 nvim_lsp.cssls.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 nvim_lsp.jsonls.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 nvim_lsp.dockerls.setup {
-    on_attach = on_attach
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 -- Format .go files on save
@@ -267,13 +276,13 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   callback = function()
     OrgImports()
   end,
-  desc = "auto organiuze go imports"
+  desc = "auto organize go imports"
 })
 
 -- Treesitter configuration
--- Parsers must be installed manually via <leader>tsi
 require('nvim-treesitter.configs').setup {
   ensured_installed = "maintained",
+  auto_install = true,
   highlight = {
     enable = true, -- false will disable the whole extension
   },
@@ -324,21 +333,65 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+-- A convenience function for installing Treesitter parsers.
+_G.install_ts_parsers = function()
+  vim.api.nvim_exec(
+    [[ :TSInstall css html json javascript typescript bash go python yaml lua ]],
+    false
+  )
+end
 
--- Compe setup
-require('compe').setup {
-  source = {
-    path = true,
-    nvim_lsp = true,
-    nvim_lua = true,
-    buffer = true,
-    calc = false,
-    vsnip = false,
-    ultisnips = false,
+-- Bind a command to run install_ts_parsers()
+vim.api.nvim_set_keymap('n', '<leader>t', 'v:lua.install_ts_parsers()', { expr = true })
+
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = 'menu,menuone,noselect'
+
+-- Set up nvim-cmp.
+local cmp = require'cmp'
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+    end,
   },
-}
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
 
 -- Utility functions for compe and luasnip
 local t = function(str)
@@ -387,16 +440,6 @@ vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
 vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
 vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
 
--- Map compe confirm and complete functions
-vim.api.nvim_set_keymap('i', '<cr>', 'compe#confirm("<cr>")', { expr = true })
-vim.api.nvim_set_keymap('i', '<c-space>', 'compe#complete()', { expr = true })
-
--- Bind a command to run install_ts_grammers()
--- TODO: This would be etter as a command, but there's no lua API for
--- doing this right now.
-vim.api.nvim_set_keymap('n', '<leader>tsi', 'v:lua.install_ts_grammers()', { expr = true })
-
--- Trouble Keybindings
 -- https://github.com/folke/trouble.nvim
 vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>",
   {silent = true, noremap = true}
