@@ -1,34 +1,7 @@
 #!/bin/bash
-# Installation steps that should be ran interactively.
+# Install dependencies for running scripts like install.sh and link.sh
 set -euo pipefail
 
-# See: https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
-dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
-# symlink ~/.config/$dir all dirs in config
-for src in $dir/config/*; do
-    pkg=$(basename "$src")
-    target="$HOME/.config/$pkg"
-
-    # If it's not a symlink...
-    if [[ ! -L "$target" ]]; then
-
-        # ...and it's a file or directory back it up first
-        if [[ -f "$target" ]] || [[ -d "$target" ]]; then
-            echo "making a backup of $target..."
-            backup=$HOME/.config/$pkg-dotfiles-backup-$(date +%s)
-            mv "$target" "$backup"
-            echo "backed up $target to $backup..."
-        fi
-
-        ln -s "$src" "$target"
-        echo "wrote link $target ~> $src..."
-    else
-        echo "$target already exists and is a symlink, skipping..."
-    fi
-done
-
-# symlink things that don't live in ~/.config
-ln -s $dir/tmux/tmux.conf ~/.tmux.conf
-
-echo "bootstrap complete"
+brew install go@1.19
+brew install node
+brew install coreutils

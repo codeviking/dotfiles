@@ -23,9 +23,7 @@ set pdir (realpath (dirname (status --current-filename)))
 fish_add_path "$pdir/../../bin"
 
 # Add a few brew installed things to the PATH
-fish_add_path /usr/local/opt/curl/bin
-fish_add_path /usr/local/opt/sqlite/bin
-fish_add_path /usr/local/sbin
+fish_add_path /opt/homebrew/bin
 
 # gpg
 set -x GPG_TTY (tty)

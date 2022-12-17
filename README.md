@@ -14,14 +14,21 @@ To setup a new environment:
 ```bash
 git clone git@github.com:codeviking/dotfiles.git
 
-# Install common packages.
-bash install.sh
+# Install minimum dependencies.
+./bootstrap.sh
 
-# Initialize user specific config.
-bash bootstrap.sh
+# Install common packages.
+./install.sh
+
+# Link configuration files into expectated locations.
+./link.sh
 
 # Initialize GPG
 bash gpg.sh
+
+# Add fish as a possible shell by editing `/etc/shells`:
+# + /opt/homebrew/bin/fish
+sudo vim /etc/shells
 
 # Change the default shell to fish.
 chsh -s /usr/local/bin/fish
