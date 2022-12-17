@@ -40,11 +40,8 @@ something like this:
 ![Screenshot of the configured TTY](tty.png)
 
 There's one more step to get things running. Launch `nvim` and dismiss the
-error about a missing theme. Then:
-
-1. Run the `:PackerSync` to install the `nvim` plugins.
-1. Type `<leader>tsi` to install the language grammars required for
-   [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter).
+error about a missing theme. Then run `:PackerSync` to install the configured
+list of `nvim` plugins (which includes the theme).
 
 That's it. You're all set!
 
