@@ -22,8 +22,8 @@ fish_add_path "$HOME/go/bin"
 set pdir (realpath (dirname (status --current-filename)))
 fish_add_path "$pdir/../../bin"
 
-# Add a few brew installed things to the PATH
-fish_add_path /opt/homebrew/bin
+# Add a brew binaries to the PATH
+fish_add_path "$(brew --prefix)/bin"
 
 # gpg
 set -x GPG_TTY (tty)
@@ -31,3 +31,7 @@ set -x GPG_TTY (tty)
 # gcloud kubectl credentials
 set -x USE_GKE_GCLOUD_AUTH_PLUGIN True
 
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/sams/opt/google-cloud-sdk/path.fish.inc' ]; . '/Users/sams/opt/google-cloud-sdk/path.fish.inc'; end
+
+set -x GOARCH arm64

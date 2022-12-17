@@ -23,9 +23,8 @@ git clone git@github.com:codeviking/dotfiles.git
 # Link configuration files into expectated locations.
 ./link.sh
 
-# Add fish as a possible shell by editing `/etc/shells`:
-# + /opt/homebrew/bin/fish
-sudo vim /etc/shells
+# Add fish as a shell candidate by editing `/etc/shells`:
+sudo echo "$(brew --prefix)/bin/fish" >> /etc/shells
 
 # Change the default shell to fish.
 chsh -s /usr/local/bin/fish

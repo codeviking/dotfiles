@@ -25,7 +25,10 @@ if [[ "$(uname)" == "Darwin" ]]; then
         shellcheck \
         curl \
         wget
-    $(brew --prefix)/opt/fzf/install
+
+    brew install --cask 1password/tap/1password-cli
+
+    $(brew --prefix)/opt/fzf/install --all
 else
     # TODO: Add equivalent commands for other operating systems
     echo "Warning: The host os isn't MacOS, some packages won't be installed"
