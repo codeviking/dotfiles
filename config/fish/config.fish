@@ -31,9 +31,6 @@ set -x GPG_TTY (tty)
 # gcloud kubectl credentials
 set -x USE_GKE_GCLOUD_AUTH_PLUGIN True
 
-# ssh agent
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "$HOME/opt/google-cloud-sdk/path.fish.inc" ]
     . "$HOME/opt/google-cloud-sdk/path.fish.inc"
