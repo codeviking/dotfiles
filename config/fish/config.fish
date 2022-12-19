@@ -38,3 +38,7 @@ end
 
 # M1
 set -x GOARCH arm64
+
+# Add SSH key to SSH agent
+ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519"
+

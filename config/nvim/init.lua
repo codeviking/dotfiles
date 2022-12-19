@@ -38,7 +38,7 @@ require('packer').startup(function()
   use 'hrsh7th/cmp-nvim-lsp' -- Autocomplete via lsp
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
   use 'ntpeters/vim-better-whitespace' -- Highlight and remove trailing whitespace
-  use { 'iamcco/markdown-preview.nvim', run = 'cd app & yarn install' } -- Preview markdown files
+  use { 'iamcco/markdown-preview.nvim', run = function() vim.fn["mkdp#util#install"]() end } -- Preview markdown files
   use 'google/vim-jsonnet' -- Jsonnet syntax highlighting and formatting
   use 'dag/vim-fish' -- Syntax highlighting for fish files
   use { 'junegunn/fzf', run = 'fzf#install()' } -- A fuzzy file finder
