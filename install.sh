@@ -24,7 +24,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
         blueutil \
         shellcheck \
         curl \
-        wget
+        wget \
+        cmctl \
+        jsonnet
 
     brew install --cask 1password/tap/1password-cli
 
