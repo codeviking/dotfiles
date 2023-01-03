@@ -26,7 +26,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
         curl \
         wget \
         cmctl \
-        jsonnet
+        jsonnet \
+        libpq \
+        golangci-lint
 
     brew install --cask 1password/tap/1password-cli
 

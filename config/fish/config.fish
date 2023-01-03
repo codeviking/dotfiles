@@ -25,6 +25,9 @@ fish_add_path "$pdir/../../bin"
 # Add a brew binaries to the PATH
 fish_add_path "$(brew --prefix)/bin"
 
+# Add psql binaries (which are keg only) to PATH
+fish_add_path "$(brew --prefix)/opt/libpq/bin"
+
 # gpg
 set -x GPG_TTY (tty)
 

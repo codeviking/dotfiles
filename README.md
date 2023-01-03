@@ -73,7 +73,7 @@ To set host specific `$PATH` extensions create a file at the path
 # gcloud
 source "$HOME/lib/google-cloud-sdk/paths.fish.inc"
 
-set -x "$PATH:$HOME/bin"
+fish_add_path "$PATH:$HOME/bin"
 ```
 
 The commands above are examples, populate the file with the `$PATH` specific 
