@@ -28,7 +28,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
         cmctl \
         jsonnet \
         libpq \
-        golangci-lint
+        golangci-lint \
+        gh
 
     brew install --cask 1password/tap/1password-cli
 
