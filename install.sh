@@ -16,6 +16,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         python@3.11 \
         go@1.19 \
         node \
+        corepack \
         fish \
         fzf \
         kubectl \
@@ -57,6 +58,7 @@ echo "429a76e5b5e692c921aa03456a41258b614374426f959535167222a28b676201  /tmp/ins
     | sha256sum --check
 fish /tmp/install.fish -y --noninteractive
 
-
+# Enable corepack (and thereby yarn)
+corepack enable
 
 echo "install complete"
