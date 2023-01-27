@@ -30,6 +30,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
         jsonnet \
         libpq \
         golangci-lint \
+        velero \
+        tree \
         gh
 
     brew install --cask 1password/tap/1password-cli
