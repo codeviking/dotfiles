@@ -64,6 +64,7 @@ require('packer').startup(function()
       }
     end
   }
+  use 'github/copilot.vim'
 end)
 
 -- Disable the jsonnet format command by using a no-op in it's place, otherwise
@@ -336,7 +337,7 @@ require('nvim-treesitter.configs').setup {
 -- A convenience function for installing Treesitter parsers.
 _G.install_ts_parsers = function()
   vim.api.nvim_exec(
-    [[ :TSInstall css html json javascript typescript bash go python yaml lua ]],
+    [[ :TSInstall css html json javascript typescript bash go python yaml lua terraform ]],
     false
   )
 end
@@ -385,7 +386,6 @@ cmp.setup.cmdline({ '/', '?' }, {
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
     { name = 'path' }
   }, {
@@ -434,7 +434,7 @@ _G.s_tab_complete = function()
   end
 end
 
--- Map tab to the above tab complete functiones
+-- Map tab to the above tab complete functions
 vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
 vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
 vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })

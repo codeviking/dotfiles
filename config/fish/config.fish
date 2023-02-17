@@ -27,6 +27,21 @@ fish_add_path "$(brew --prefix)/bin"
 
 # Add psql binaries (which are keg only) to PATH
 fish_add_path "$(brew --prefix)/opt/libpq/bin"
+fish_add_path "$(brew --prefix)/sbin"
+
+# Override MacOS python3 installation
+mkdir -p "$HOME/bin"
+if [ ! -L "$HOME/bin/python3" ]
+    ln -s "$(brew --prefix)/bin/python3.11" "$HOME/bin/python3"
+end
+if [ ! -L "$HOME/bin/python" ]
+    ln -s "$(brew --prefix)/bin/python3.11" "$HOME/bin/python"
+end
+
+# Symlink conda, so that we don't get evnerything in anaconda3/bin
+if [ ! -L "$HOME/bin/conda" ]
+    ln -s "$(brew --prefix)/anaconda3/bin/conda" "$HOME/bin/conda"
+end
 
 # gpg
 set -x GPG_TTY (tty)
@@ -44,4 +59,7 @@ set -x GOARCH arm64
 
 # Add SSH key to SSH agent
 ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519"
+
+# You need to run this once to use conda
+alias condainit="eval /opt/homebrew/anaconda3/bin/conda 'shell.fish' 'hook' $argv | source"
 

@@ -35,8 +35,12 @@ if [[ "$(uname)" == "Darwin" ]]; then
         gh
 
     brew install --cask 1password/tap/1password-cli
+    brew install --cask anaconda
 
-    $(brew --prefix)/opt/fzf/install --all
+    brew tap hashicorp/tap
+    brew install hashicorp/tap/terraform
+
+    "$(brew --prefix)"/opt/fzf/install --all
 else
     # TODO: Add equivalent commands for other operating systems
     echo "Warning: The host os isn't MacOS, some packages won't be installed"
