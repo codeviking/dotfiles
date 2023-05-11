@@ -32,6 +32,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         golangci-lint \
         velero \
         tree \
+        pstree \
         gh
 
     brew install --cask 1password/tap/1password-cli
