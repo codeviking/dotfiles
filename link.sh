@@ -42,8 +42,4 @@ fish /tmp/install.fish -y --noninteractive
 # Install the pure theme.
 fish -c "omf install pure"
 
-# Initialize conda (silly conda) and prevent base environment from being active by default.
-conda init fish
-conda config --set auto_activate_base false
-
 echo "link complete"
