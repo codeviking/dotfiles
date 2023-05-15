@@ -48,7 +48,7 @@ That's it. You're all set!
 
 ### Commit Signing
 
-I use GPG to sign commits. This repository includes scripts for setting that up.
+I use `gpg` to sign commits. This repository includes scripts for setting that up.
 
 First, follow [these instructions](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key)
 for generating a new GPG key. Then follow the instructions for adding it to
