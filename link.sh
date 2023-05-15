@@ -29,7 +29,9 @@ for src in $dir/config/*; do
 done
 
 # Symlink things that don't live in ~/.config
-ln -s $dir/tmux/tmux.conf ~/.tmux.conf
+if [[ ! -L "$HOME/.tmux.conf" ]]; then
+    ln -s $dir/tmux/tmux.conf ~/.tmux.conf
+fi
 
 # Install oh-my-fish; this must be done after linking things above.
 curl -L https://get.oh-my.fish > /tmp/install.fish
