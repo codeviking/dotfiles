@@ -32,6 +32,9 @@ Once that's complete launch a new terminal. Run `link.sh` to finalize things:
 ```bash
 # Link configuration files into expected locations.
 ./link.sh
+
+# Configure git
+./gitconf.sh
 ```
 
 You should now see something like this whenever you start a new terminal:
