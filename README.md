@@ -20,18 +20,21 @@ git clone git@github.com:codeviking/dotfiles.git
 # Install common packages.
 ./install.sh
 
-# Link configuration files into expectated locations.
-./link.sh
-
 # Add fish as a shell candidate by editing `/etc/shells`:
 sudo echo "$(brew --prefix)/bin/fish" >> /etc/shells
 
 # Change the default shell to fish.
-chsh -s /usr/local/bin/fish
+chsh -s "$(brew --prefix)/bin/fish"
 ```
 
-Once those steps are done launch a new terminal. You should now see
-something like this:
+Once that's complete launch a new terminal. Run `link.sh` to finalize things:
+
+```bash
+# Link configuration files into expected locations.
+./link.sh
+```
+
+You should now see something like this whenever you start a new terminal:
 
 ![Screenshot of the configured TTY](tty.png)
 
