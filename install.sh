@@ -33,7 +33,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
         velero \
         tree \
         pstree \
-        gh
+        gh \
+        gpg \
+        pinentry-mac
 
     brew install --cask 1password/tap/1password-cli
     brew install --cask anaconda
