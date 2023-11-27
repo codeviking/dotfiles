@@ -5,6 +5,8 @@ set -euo pipefail
 # See: https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
+mkdir -p ~/.config
+
 # Symlink ~/.config/$dir all dirs in config
 for src in $dir/config/*; do
     pkg=$(basename "$src")
