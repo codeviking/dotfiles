@@ -14,7 +14,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         jq \
         yq \
         python@3.11 \
-        go@1.19 \
+        go \
         node \
         corepack \
         fish \
@@ -35,7 +35,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
         pstree \
         gh \
         gpg \
-        pinentry-mac
+        pinentry-mac \
+        grpcurl
 
     brew install --cask 1password/tap/1password-cli
     brew install --cask anaconda
