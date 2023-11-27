@@ -33,6 +33,9 @@ Once that's complete launch a new terminal. Run `link.sh` to finalize things:
 # Link configuration files into expected locations.
 ./link.sh
 
+# Configure oh-my-fish (https://github.com/oh-my-fish/oh-my-fish)
+./omf.sh
+
 # Configure git
 ./gitconf.sh
 ```
