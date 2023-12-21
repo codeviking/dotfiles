@@ -36,7 +36,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
         gh \
         gpg \
         pinentry-mac \
-        grpcurl
+        grpcurl \
+        gsed
 
     brew install --cask 1password/tap/1password-cli
     brew install --cask anaconda
