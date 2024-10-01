@@ -35,4 +35,7 @@ if [[ ! -L "$HOME/.tmux.conf" ]]; then
     ln -s $dir/tmux/tmux.conf ~/.tmux.conf
 fi
 
+# Silence iTerm login message
+touch ~/.hushlogin
+
 echo "link complete"
