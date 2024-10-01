@@ -55,6 +55,8 @@ set -x GOARCH arm64
 # Add SSH key to SSH agent
 ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" 2>/dev/null
 
+# Disable default venv prompt
+set -x VIRTUAL_ENV_DISABLE_PROMPT 1
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/sams/opt/google-cloud-sdk/path.fish.inc' ]; . '/Users/sams/opt/google-cloud-sdk/path.fish.inc'; end
