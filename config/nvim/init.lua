@@ -46,21 +46,10 @@ require('packer').startup(function()
   use 'Glench/Vim-Jinja2-Syntax' -- Jinja syntax highlighting
   use {
     'folke/trouble.nvim',
-    requires = { 'kyazdani42/nvim-web-devicons' },
+    requires = 'nvim-tree/nvim-web-devicons',
     config = function()
-      require("trouble").setup {
-        -- settings without a patched font or icons
-        icons = false,
-        fold_open = "v",
-        fold_closed = ">",
-        indent_lines = false,
-        signs = {
-            error = "error",
-            warning = "warn",
-            hint = "hint",
-            information = "info"
-        },
-        use_diagnostic_signs = false
+      require('trouble').setup {
+        cmd = 'Trouble',
       }
     end
   }
@@ -208,7 +197,7 @@ nvim_lsp.pyright.setup {
   capabilities = capabilities
 }
 
-nvim_lsp.tsserver.setup {
+nvim_lsp.ts_ls.setup {
   on_attach = on_attach,
   capabilities = capabilities
 }
@@ -441,22 +430,22 @@ vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true 
 vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
 
 -- https://github.com/folke/trouble.nvim
-vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>",
+vim.api.nvim_set_keymap("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>",
   {silent = true, noremap = true}
 )
-vim.api.nvim_set_keymap("n", "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>",
+vim.api.nvim_set_keymap("n", "<leader>xX", "<cmd>Trouble diagnostics toggle fitler.buf=0<cr>",
   {silent = true, noremap = true}
 )
-vim.api.nvim_set_keymap("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>",
+vim.api.nvim_set_keymap("n", "<leader>cs", "<cmd>Trouble symbols toggle focus=false<cr>",
   {silent = true, noremap = true}
 )
-vim.api.nvim_set_keymap("n", "<leader>xl", "<cmd>Trouble loclist<cr>",
+vim.api.nvim_set_keymap("n", "<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
   {silent = true, noremap = true}
 )
-vim.api.nvim_set_keymap("n", "<leader>xq", "<cmd>Trouble quickfix<cr>",
+vim.api.nvim_set_keymap("n", "<leader>xL", "<cmd>Trouble loclist toggle<cr>",
   {silent = true, noremap = true}
 )
-vim.api.nvim_set_keymap("n", "gR", "<cmd>Trouble lsp_references<cr>",
+vim.api.nvim_set_keymap("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>",
   {silent = true, noremap = true}
 )
 
