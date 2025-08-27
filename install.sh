@@ -13,7 +13,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         nvim \
         jq \
         yq \
-        python@3.11 \
+        python \
         go \
         node \
         corepack \
@@ -37,10 +37,13 @@ if [[ "$(uname)" == "Darwin" ]]; then
         gpg \
         pinentry-mac \
         grpcurl \
-        gsed
+        gsed \
+        uv
 
     brew install --cask 1password/tap/1password-cli
     brew install --cask anaconda
+    brew install --cask ghostty
+    brew install --cask rectangle
 
     brew tap hashicorp/tap
     brew install hashicorp/tap/terraform
@@ -61,7 +64,8 @@ npm install -g pyright \
                typescript-language-server \
                bash-language-server \
                vscode-langservers-extracted \
-               dockerfile-language-server-nodejs
+               dockerfile-language-server-nodejs \
+               @anthropic-ai/claude-code
 
 # Install oh-my-fish
 curl -L https://get.oh-my.fish > /tmp/install.fish

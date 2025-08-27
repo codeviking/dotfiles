@@ -1,0 +1,7 @@
+font-size = 24
+font-family = "Meslo LG M for Powerline"
+window-height = 30
+window-width = 90
+window-position-x = 0
+window-position-y = 0
+keybind = shift+enter=text:\n

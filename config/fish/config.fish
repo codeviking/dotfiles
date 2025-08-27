@@ -25,6 +25,9 @@ fish_add_path "$pdir/../../bin"
 # Add a brew binaries to the PATH
 fish_add_path "$(brew --prefix)/bin"
 
+# Add version agnostic python links
+fish_add_path $(brew --prefix python)/libexec/bin
+
 # Add psql binaries (which are keg only) to PATH
 fish_add_path "$(brew --prefix)/opt/libpq/bin"
 fish_add_path "$(brew --prefix)/sbin"
@@ -65,3 +68,18 @@ end
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/sams/opt/google-cloud-sdk/path.fish.inc' ]; . '/Users/sams/opt/google-cloud-sdk/path.fish.inc'; end
+
+# bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH
+
+# fix remote terminal when using ghostty
+set --export TERM xterm-256color
+
+# add `uv` binaries to the path
+fish_add_path /Users/sams/.local/bin
+
+# secrets that are exported in all shells
+if [ -f "$HOME/.secret/fish/shell.fish" ]
+  . "$HOME/.secret/fish/shell.fish"
+end

@@ -42,7 +42,7 @@ require('packer').startup(function()
   use 'google/vim-jsonnet' -- Jsonnet syntax highlighting and formatting
   use 'dag/vim-fish' -- Syntax highlighting for fish files
   use { 'junegunn/fzf', run = 'fzf#install()' } -- A fuzzy file finder
-  use 'junegunn/fzf.vim' -- Bindinds for fzf
+  use 'junegunn/fzf.vim' -- Bindings for fzf
   use 'Glench/Vim-Jinja2-Syntax' -- Jinja syntax highlighting
   use {
     'folke/trouble.nvim',
@@ -52,6 +52,16 @@ require('packer').startup(function()
         cmd = 'Trouble',
       }
     end
+  }
+  use {
+    "olimorris/codecompanion.nvim",
+    config = function()
+      require("codecompanion").setup()
+    end,
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    }
   }
   use 'github/copilot.vim'
 end)
@@ -326,7 +336,7 @@ require('nvim-treesitter.configs').setup {
 -- A convenience function for installing Treesitter parsers.
 _G.install_ts_parsers = function()
   vim.api.nvim_exec(
-    [[ :TSInstall css html json javascript typescript bash go python yaml lua terraform ]],
+    [[ :TSInstall css html json javascript typescript bash go python yaml lua terraform markdown markdown_inline ]],
     false
   )
 end
@@ -358,11 +368,11 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
   }),
   sources = cmp.config.sources({
+    { name = 'copilot' },
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-  }, {
     { name = 'buffer' },
-  })
+  }),
 })
 
 -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
@@ -376,9 +386,8 @@ cmp.setup.cmdline({ '/', '?' }, {
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
   sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-    { name = 'cmdline' }
+    { name = 'path' },
+    { name = 'cmdline' },
   })
 })
 
@@ -449,3 +458,25 @@ vim.api.nvim_set_keymap("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>",
   {silent = true, noremap = true}
 )
 
+require("codecompanion").setup {
+  strategies = {
+    chat = {
+      adapter = "anthropic",
+    },
+    inline = {
+      adapter = "anthropic",
+    },
+    cmd = {
+      adapter = "anthropic",
+    }
+  },
+  adapters = {
+    anthropic = function()
+      return require("codecompanion.adapters").extend("anthropic", {
+        env = {
+          api_key = "ANTHROPIC_API_KEY",
+        },
+      })
+    end,
+  },
+}
