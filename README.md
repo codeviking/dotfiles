@@ -42,7 +42,7 @@ Once that's complete launch a new terminal. Run `link.sh` to finalize things:
 
 You should now see something like this whenever you start a new terminal:
 
-![Screenshot of the configured TTY](tty.png)
+![Screenshot of the configured Terminal](term.png)
 
 There's one more step to get things running. Launch `nvim` and dismiss the
 error about a missing theme. Then run `:PackerSync` to install the configured
