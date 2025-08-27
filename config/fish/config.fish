@@ -83,3 +83,4 @@ fish_add_path /Users/sams/.local/bin
 if [ -f "$HOME/.secret/fish/shell.fish" ]
   . "$HOME/.secret/fish/shell.fish"
 end
+

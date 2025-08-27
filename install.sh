@@ -40,6 +40,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         gsed \
         uv
 
+    brew install --cask font-meslo-for-powerline
     brew install --cask 1password/tap/1password-cli
     brew install --cask anaconda
     brew install --cask ghostty
@@ -67,13 +68,16 @@ npm install -g pyright \
                dockerfile-language-server-nodejs \
                @anthropic-ai/claude-code
 
-# Install oh-my-fish
-curl -L https://get.oh-my.fish > /tmp/install.fish
-echo "429a76e5b5e692c921aa03456a41258b614374426f959535167222a28b676201  /tmp/install.fish" \
-    | sha256sum --check
-fish /tmp/install.fish -y --noninteractive
+# Install fisher
+# https://github.com/jorgebucaran/fisher
+curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
+
+# Install agnoster theme
+# https://github.com/hauleth/agnoster
+fisher install hauleth/agnoster
 
 # Enable corepack (and thereby yarn)
 corepack enable
 
 echo "install complete"
+
