@@ -25,10 +25,6 @@ sudo echo "$(brew --prefix)/bin/fish" >> /etc/shells
 
 # Change the default shell to fish.
 chsh -s "$(brew --prefix)/bin/fish"
-
-# Install powerline fonts
-git clone https://github.com/powerline/fonts.git --depth=1
-cd fonts && ./install.sh
 ```
 
 Once that's complete launch a new terminal. Run `link.sh` to finalize things:
