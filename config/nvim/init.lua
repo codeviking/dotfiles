@@ -53,16 +53,6 @@ require('packer').startup(function()
       }
     end
   }
-  use {
-    "olimorris/codecompanion.nvim",
-    config = function()
-      require("codecompanion").setup()
-    end,
-    requires = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    }
-  }
   use 'github/copilot.vim'
 end)
 
@@ -168,74 +158,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.api.nvim_set_keymap('n', 'Y', 'y$', { noremap = true })
 
 -- LSP settings
-local nvim_lsp = require 'lspconfig'
-local on_attach = function(_, bufnr)
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  local opts = { noremap = true, silent = true }
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
-end
-
--- Setup language servers
--- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-nvim_lsp.gopls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
-nvim_lsp.pyright.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
-nvim_lsp.ts_ls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
-nvim_lsp.bashls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
-nvim_lsp.html.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
-nvim_lsp.cssls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
-nvim_lsp.jsonls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
-nvim_lsp.dockerls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
+vim.lsp.enable('gopls')
+vim.lsp.enable('pyright')
+vim.lsp.enable('ts_ls')
+vim.lsp.enable('bashls')
+vim.lsp.enable('html')
+vim.lsp.enable('cssls')
+vim.lsp.enable('jsonls')
+vim.lsp.enable('dockerls')
 
 -- Format .go files on save
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -457,26 +387,3 @@ vim.api.nvim_set_keymap("n", "<leader>xL", "<cmd>Trouble loclist toggle<cr>",
 vim.api.nvim_set_keymap("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>",
   {silent = true, noremap = true}
 )
-
-require("codecompanion").setup {
-  strategies = {
-    chat = {
-      adapter = "anthropic",
-    },
-    inline = {
-      adapter = "anthropic",
-    },
-    cmd = {
-      adapter = "anthropic",
-    }
-  },
-  adapters = {
-    anthropic = function()
-      return require("codecompanion.adapters").extend("anthropic", {
-        env = {
-          api_key = "ANTHROPIC_API_KEY",
-        },
-      })
-    end,
-  },
-}
