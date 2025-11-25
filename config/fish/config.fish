@@ -49,7 +49,7 @@ set -x USE_GKE_GCLOUD_AUTH_PLUGIN True
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "$HOME/opt/google-cloud-sdk/path.fish.inc" ]
-    . "$HOME/opt/google-cloud-sdk/path.fish.inc"
+    source "$HOME/opt/google-cloud-sdk/path.fish.inc"
 end
 
 # M1
@@ -61,13 +61,14 @@ ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" 2>/dev/null
 # Disable default venv prompt
 set -x VIRTUAL_ENV_DISABLE_PROMPT 1
 
-# Custom greeting
-function fish_greeting
-  archinfo
-end
+# Disable greeting
+set fish_greeting
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/sams/opt/google-cloud-sdk/path.fish.inc' ]; . '/Users/sams/opt/google-cloud-sdk/path.fish.inc'; end
+if [ -f '/Users/sams/opt/google-cloud-sdk/path.fish.inc' ]
+    source '/Users/sams/opt/google-cloud-sdk/path.fish.inc'
+
+end
 
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
@@ -81,6 +82,5 @@ fish_add_path /Users/sams/.local/bin
 
 # secrets that are exported in all shells
 if [ -f "$HOME/.secret/fish/shell.fish" ]
-  . "$HOME/.secret/fish/shell.fish"
+    source "$HOME/.secret/fish/shell.fish"
 end
-
