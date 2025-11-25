@@ -16,3 +16,11 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.concealcursor = ""
   end,
 })
+
+-- Don't autocomplete in markdown files
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.b.completion = false
+  end,
+})
