@@ -67,7 +67,6 @@ set fish_greeting
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/sams/opt/google-cloud-sdk/path.fish.inc' ]
     source '/Users/sams/opt/google-cloud-sdk/path.fish.inc'
-
 end
 
 # bun
