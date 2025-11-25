@@ -39,6 +39,10 @@ function agnoster::context
   set -f user (whoami)
   set -f host (hostname)
 
+  if [ "$user" != "$DEFAULT_USER" ]; or [ -n "$SSH_CLIENT" ]
+    agnoster::segment black normal "$user@$host "
+  end
+
   if [ ! -z "$IN_NIX_SHELL" ]
     agnoster::segment red black "nix "
   end

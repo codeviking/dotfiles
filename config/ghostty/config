@@ -5,3 +5,4 @@ window-width = 90
 window-position-x = 0
 window-position-y = 0
 keybind = shift+enter=text:\n
+theme = TokyoNight Moon

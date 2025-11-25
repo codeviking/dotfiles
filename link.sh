@@ -1,6 +1,7 @@
 #!/bin/bash
-# Installation steps that should be ran interactively.
 set -euo pipefail
+
+# Create links from ~/.config (and other locations) to files in this repository
 
 # See: https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -38,4 +39,4 @@ fi
 # Silence iTerm login message
 touch ~/.hushlogin
 
-echo "link complete"
+echo "OK: link complete"

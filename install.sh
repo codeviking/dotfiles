@@ -1,58 +1,60 @@
 #!/bin/bash
-# Install some required software using brew.
 set -euo pipefail
+
+# General installation and setup.
 
 # If we're on MacOS use brew to install a bunch of packages.
 if [[ "$(uname)" == "Darwin" ]]; then
-    if ! command -v brew &> /dev/null; then
-        echo "Error: brew isn't installed."
-        exit 1
-    fi
+  if ! command -v brew &>/dev/null; then
+    echo "Error: brew isn't installed."
+    exit 1
+  fi
 
-    brew install \
-        nvim \
-        jq \
-        yq \
-        python \
-        go \
-        node \
-        corepack \
-        fish \
-        fzf \
-        kubectl \
-        ripgrep \
-        mosh \
-        blueutil \
-        shellcheck \
-        curl \
-        wget \
-        cmctl \
-        jsonnet \
-        libpq \
-        golangci-lint \
-        velero \
-        tree \
-        pstree \
-        gh \
-        gpg \
-        pinentry-mac \
-        grpcurl \
-        gsed \
-        uv
+  brew install \
+    nvim \
+    jq \
+    yq \
+    python \
+    go \
+    node \
+    corepack \
+    coreutils \
+    fish \
+    fzf \
+    kubectl \
+    ripgrep \
+    mosh \
+    blueutil \
+    shellcheck \
+    curl \
+    wget \
+    cmctl \
+    jsonnet \
+    libpq \
+    golangci-lint \
+    velero \
+    tree \
+    pstree \
+    gh \
+    gpg \
+    pinentry-mac \
+    grpcurl \
+    gsed \
+    uv
 
-    brew install --cask font-meslo-for-powerline
-    brew install --cask 1password/tap/1password-cli
-    brew install --cask anaconda
-    brew install --cask ghostty
-    brew install --cask rectangle
+  brew install --casks font-meslo-for-powerline \
+    1password/tap/1password-cli \
+    ghostty \
+    rectangle \
+    docker-desktop
 
-    brew tap hashicorp/tap
-    brew install hashicorp/tap/terraform
+  brew tap hashicorp/tap
+  brew install hashicorp/tap/terraform
 
-    "$(brew --prefix)"/opt/fzf/install --all
+  "$(brew --prefix)"/opt/fzf/install --all
 else
-    # TODO: Add equivalent commands for other operating systems
-    echo "Warning: The host os isn't MacOS, some packages won't be installed"
+  # TODO: Add equivalent commands for other operating systems
+  echo "Warning: The host os isn't MacOS, some packages won't be installed"
 fi
 
 # Language server installation
@@ -61,23 +63,18 @@ fi
 go install golang.org/x/tools/gopls@latest
 
 npm install -g pyright \
-               typescript \
-               typescript-language-server \
-               bash-language-server \
-               vscode-langservers-extracted \
-               dockerfile-language-server-nodejs \
-               @anthropic-ai/claude-code
+  typescript \
+  typescript-language-server \
+  bash-language-server \
+  vscode-langservers-extracted \
+  dockerfile-language-server-nodejs \
+  @anthropic-ai/claude-code
 
 # Install fisher
 # https://github.com/jorgebucaran/fisher
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 
-# Install agnoster theme
-# https://github.com/hauleth/agnoster
-fisher install hauleth/agnoster
-
 # Enable corepack (and thereby yarn)
 corepack enable
 
-echo "install complete"
-
+echo "OK: install complete"
