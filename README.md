@@ -61,7 +61,7 @@ To set host specific `$PATH` extensions create a file named `$HOME/.config/paths
 with contents like:
 
 ```fish
-#!/bin/fish
+#!/opt/homebrea/bin/fish
 
 # gcloud
 source "$HOME/lib/google-cloud-sdk/paths.fish.inc"
