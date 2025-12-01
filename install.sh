@@ -31,7 +31,6 @@ if [[ "$(uname)" == "Darwin" ]]; then
     cmctl \
     jsonnet \
     libpq \
-    golangci-lint \
     velero \
     tree \
     pstree \
