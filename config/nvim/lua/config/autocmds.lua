@@ -17,9 +17,9 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Don't autocomplete in markdown files
+-- Don't autocomplete in markdown or gitcommit
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
+  pattern = { "markdown", "gitcommit" },
   callback = function()
     vim.b.completion = false
   end,
