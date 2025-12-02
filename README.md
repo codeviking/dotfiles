@@ -54,17 +54,3 @@ After those steps are complete, run:
 
 Finally follow [these steps](https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key)
 to configure `git` to sign commits using the key you created.
-
-### Host Specific PATH Extensions
-
-To set host specific `$PATH` extensions create a file named `$HOME/.config/paths.fish`
-with contents like:
-
-```fish
-#!/opt/homebrea/bin/fish
-
-# gcloud
-source "$HOME/lib/google-cloud-sdk/paths.fish.inc"
-
-fish_add_path "$PATH:$HOME/bin"
-```
