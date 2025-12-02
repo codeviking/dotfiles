@@ -83,3 +83,6 @@ fish_add_path /Users/sams/.local/bin
 if [ -f "$HOME/.secret/fish/shell.fish" ]
     source "$HOME/.secret/fish/shell.fish"
 end
+
+# This disables the user@host prompt, which isn't very helpful
+set -g DEFAULT_USER $(whoami)
