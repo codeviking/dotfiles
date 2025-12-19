@@ -1,158 +1,170 @@
-function agnoster::set_default
-  set -f name $argv[1]
-  set -e argv[1]
-  set -q $name; or set -g $name $argv
-end
-
-agnoster::set_default AGNOSTER_SEGMENT_SEPARATOR '' \u2502
-agnoster::set_default AGNOSTER_SEGMENT_RSEPARATOR '' \u2502
-
-agnoster::set_default AGNOSTER_ICON_ERROR \u2717
-agnoster::set_default AGNOSTER_ICON_ROOT \u26a1
-agnoster::set_default AGNOSTER_ICON_BGJOBS \u2699
-
-agnoster::set_default AGNOSTER_ICON_SCM_BRANCH \u2387
-agnoster::set_default AGNOSTER_ICON_SCM_REF \u27a6
-agnoster::set_default AGNOSTER_ICON_SCM_STAGED '…'
-agnoster::set_default AGNOSTER_ICON_SCM_STASHED '~'
-
-function agnoster::segment --desc 'Create prompt segment'
-  set -f bg $argv[1]
-  set -f fg $argv[2]
-  set -e argv[1 2]
-  set -f content $argv
-
-  set_color -b $bg
-
-  if set -q __agnoster_background; and [ "$__agnoster_background" != "$bg" ]
-    set_color "$__agnoster_background"; echo -n "$AGNOSTER_SEGMENT_SEPARATOR[1]"
-  end
-
-  if [ -n "$content" ]
-    set -g __agnoster_background $bg
-    set_color -b $bg $fg
-    echo -n " $content"
-  end
-end
-
-function agnoster::context
-  set -f user (whoami)
-  set -f host (hostname)
-
-  if [ "$user" != "$DEFAULT_USER" ]; or [ -n "$SSH_CLIENT" ]
-    agnoster::segment black normal "$user@$host "
-  end
-
-  if [ ! -z "$IN_NIX_SHELL" ]
-    agnoster::segment red black "nix "
-  end
-end
-
-# Status:
-# - was there an error
-# - am I root
-# - are there background jobs?
-function agnoster::status
-  if [ "$__agnoster_last_status" -ne 0 ]
-    set -f icons $icons "$AGNOSTER_ICON_ERROR"
-  end
-  if [ (id -u $USER) -eq 0 ]
-    set -f icons $icons "$AGNOSTER_ICON_ROOT"
-  end
-  if [ (jobs -l | wc -l) -ne 0 ]
-    set -f icons $icons "$AGNOSTER_ICON_BGJOBS"
-  end
-
-  if set -q icons
-    agnoster::segment black red "$icons "
-  end
-end
-
-# Git {{{
-# Utils {{{
-function agnoster::git::is_repo
-  command git rev-parse --is-inside-work-tree 2>/dev/null >/dev/null
-end
-
-function agnoster::git::color
-  if command git diff --no-ext-diff --quiet --exit-code
-    echo "green"
-  else
-    echo "yellow"
-  end
-end
-
-function agnoster::git::branch
-  set -f ref (command git symbolic-ref HEAD 2>/dev/null)
-  if [ "$status" -ne 0 ]
-    set -f branch (command git show-ref --head -s --abbrev | head -n1 2>/dev/null)
-    set -f ref "$AGNOSTER_ICON_SCM_REF $branch"
-  end
-  echo "$ref" | sed "s|\s*refs/heads/|$AGNOSTER_ICON_SCM_BRANCH |1"
-end
-
-function agnoster::git::ahead
-  command git rev-list --left-right '@{upstream}...HEAD' 2>/dev/null | \
-    awk '
-      />/ {a += 1}
-      /</ {b += 1}
-      {if (a > 0 && b > 0) nextfile}
-      END {
-        if (a > 0 && b > 0)
-          print "±";
-        else if (a > 0)
-          print "+";
-        else if (b > 0)
-          print "-"
-      }'
-end
-
-function agnoster::git::stashed
-  command git rev-parse --verify --quiet refs/stash >/dev/null; and echo -n "$AGNOSTER_ICON_SCM_STASHED"
-end
-
-function agnoster::git::staged
-  command git diff --cached --no-ext-diff --quiet --exit-code; or echo -n "$AGNOSTER_ICON_SCM_STAGED"
-end
-# }}}
-
-function agnoster::git -d "Display the actual git state"
-  agnoster::git::is_repo; or return
-
-  set -f staged  (agnoster::git::staged)
-  set -f stashed (agnoster::git::stashed)
-  set -f branch (agnoster::git::branch)
-  set -f ahead (agnoster::git::ahead)
-
-  set -f content "$branch$ahead$staged$stashed"
-
-  agnoster::segment (agnoster::git::color) black "$content "
-end
-# }}}
-
-function agnoster::dir -d 'Print current working directory'
-  set -f dir (prompt_pwd)
-  if set -q AGNOSTER_SEGMENT_SEPARATOR[2]
-    set -f dir (echo "$dir" | sed "s,/,$AGNOSTER_SEGMENT_SEPARATOR[2],g")
-  end
-  agnoster::segment blue black "$dir "
-end
-
-function agnoster::finish
-  agnoster::segment normal normal
-  echo -n ' '
-  set -e __agnoster_background
-end
-
 function fish_prompt
-  set -g __agnoster_last_status $status
+end # In case this file gets loaded non-interactively, e.g by conda
+status is-interactive || exit
 
-  agnoster::status
-  agnoster::context
-  agnoster::dir
-  agnoster::git
-  agnoster::finish
+_tide_remove_unusable_items
+_tide_cache_variables
+_tide_parent_dirs
+source (functions --details _tide_pwd)
 
-  set_color normal
-  set_color -b normal
+set -l prompt_var _tide_prompt_$fish_pid
+set -U $prompt_var # Set var here so if we erase $prompt_var, bg job won't set a uvar
+
+set_color normal | read -l color_normal
+status fish-path | read -l fish_path
+
+# _tide_repaint prevents us from creating a second background job
+function _tide_refresh_prompt --on-variable $prompt_var --on-variable COLUMNS
+    set -g _tide_repaint
+    commandline -f repaint
+end
+
+if contains newline $_tide_left_items # two line prompt initialization
+    test "$tide_prompt_add_newline_before" = true && set -l add_newline '\n'
+
+    set_color $tide_prompt_color_frame_and_connection -b normal | read -l prompt_and_frame_color
+
+    set -l column_offset 5
+    test "$tide_left_prompt_frame_enabled" = true &&
+        set -l top_left_frame "$prompt_and_frame_color╭─" &&
+        set -l bot_left_frame "$prompt_and_frame_color╰─" &&
+        set column_offset 3
+    test "$tide_right_prompt_frame_enabled" = true &&
+        set -l top_right_frame "$prompt_and_frame_color─╮" &&
+        set -l bot_right_frame "$prompt_and_frame_color─╯" &&
+        set column_offset (math $column_offset-2)
+
+    if test "$tide_prompt_transient_enabled" = true
+        eval "
+function fish_prompt
+    _tide_status=\$status _tide_pipestatus=\$pipestatus if not set -e _tide_repaint
+        jobs -q && jobs -p | count | read -lx _tide_jobs
+        $fish_path -c \"set _tide_pipestatus \$_tide_pipestatus
+set _tide_parent_dirs \$_tide_parent_dirs
+PATH=\$(string escape \"\$PATH\") CMD_DURATION=\$CMD_DURATION fish_bind_mode=\$fish_bind_mode set $prompt_var (_tide_2_line_prompt)\" &
+        builtin disown
+
+        command kill \$_tide_last_pid 2>/dev/null
+        set -g _tide_last_pid \$last_pid
+    end
+
+    if not set -q _tide_transient
+        math \$COLUMNS-(string length -V \"\$$prompt_var[1][1]\$$prompt_var[1][3]\")+$column_offset | read -lx dist_btwn_sides
+
+        echo -n $add_newline'$top_left_frame'(string replace @PWD@ (_tide_pwd) \"\$$prompt_var[1][1]\")'$prompt_and_frame_color'
+        string repeat -Nm(math max 0, \$dist_btwn_sides-\$_tide_pwd_len) '$tide_prompt_icon_connection'
+
+        echo \"\$$prompt_var[1][3]$top_right_frame\"
+    end
+    echo -n \e\[0J\"$bot_left_frame\$$prompt_var[1][2]$color_normal \"
+end
+
+function fish_right_prompt
+    set -e _tide_transient || string unescape \"\$$prompt_var[1][4]$bot_right_frame$color_normal\"
+end"
+    else
+        eval "
+function fish_prompt
+    _tide_status=\$status _tide_pipestatus=\$pipestatus if not set -e _tide_repaint
+        jobs -q && jobs -p | count | read -lx _tide_jobs
+        $fish_path -c \"set _tide_pipestatus \$_tide_pipestatus
+set _tide_parent_dirs \$_tide_parent_dirs
+PATH=\$(string escape \"\$PATH\") CMD_DURATION=\$CMD_DURATION fish_bind_mode=\$fish_bind_mode set $prompt_var (_tide_2_line_prompt)\" &
+        builtin disown
+
+        command kill \$_tide_last_pid 2>/dev/null
+        set -g _tide_last_pid \$last_pid
+    end
+
+    math \$COLUMNS-(string length -V \"\$$prompt_var[1][1]\$$prompt_var[1][3]\")+$column_offset | read -lx dist_btwn_sides
+
+    echo -ns $add_newline'$top_left_frame'(string replace @PWD@ (_tide_pwd) \"\$$prompt_var[1][1]\")'$prompt_and_frame_color'
+    string repeat -Nm(math max 0, \$dist_btwn_sides-\$_tide_pwd_len) '$tide_prompt_icon_connection'
+    echo -ns \"\$$prompt_var[1][3]$top_right_frame\"\n\"$bot_left_frame\$$prompt_var[1][2]$color_normal \"
+end
+
+function fish_right_prompt
+    string unescape \"\$$prompt_var[1][4]$bot_right_frame$color_normal\"
+end"
+    end
+else # one line prompt initialization
+    test "$tide_prompt_add_newline_before" = true && set -l add_newline '\0'
+
+    math 5 -$tide_prompt_min_cols | read -l column_offset
+    test $column_offset -ge 0 && set column_offset "+$column_offset"
+
+    if test "$tide_prompt_transient_enabled" = true
+        eval "
+function fish_prompt
+    set -lx _tide_status \$status
+    _tide_pipestatus=\$pipestatus if not set -e _tide_repaint
+        jobs -q && jobs -p | count | read -lx _tide_jobs
+        $fish_path -c \"set _tide_pipestatus \$_tide_pipestatus
+set _tide_parent_dirs \$_tide_parent_dirs
+PATH=\$(string escape \"\$PATH\") CMD_DURATION=\$CMD_DURATION fish_bind_mode=\$fish_bind_mode set $prompt_var (_tide_1_line_prompt)\" &
+        builtin disown
+
+        command kill \$_tide_last_pid 2>/dev/null
+        set -g _tide_last_pid \$last_pid
+    end
+
+    if set -q _tide_transient
+        echo -n \e\[0J
+        add_prefix= _tide_item_character
+        echo -n '$color_normal '
+    else
+        math \$COLUMNS-(string length -V \"\$$prompt_var[1][1]\$$prompt_var[1][2]\")$column_offset | read -lx dist_btwn_sides
+        string replace @PWD@ (_tide_pwd) $add_newline \$$prompt_var[1][1]'$color_normal '
+    end
+end
+
+function fish_right_prompt
+    set -e _tide_transient || string unescape \"\$$prompt_var[1][2]$color_normal\"
+end"
+    else
+        eval "
+function fish_prompt
+    _tide_status=\$status _tide_pipestatus=\$pipestatus if not set -e _tide_repaint
+        jobs -q && jobs -p | count | read -lx _tide_jobs
+        $fish_path -c \"set _tide_pipestatus \$_tide_pipestatus
+set _tide_parent_dirs \$_tide_parent_dirs
+PATH=\$(string escape \"\$PATH\") CMD_DURATION=\$CMD_DURATION fish_bind_mode=\$fish_bind_mode set $prompt_var (_tide_1_line_prompt)\" &
+        builtin disown
+
+        command kill \$_tide_last_pid 2>/dev/null
+        set -g _tide_last_pid \$last_pid
+    end
+
+    math \$COLUMNS-(string length -V \"\$$prompt_var[1][1]\$$prompt_var[1][2]\")$column_offset | read -lx dist_btwn_sides
+    string replace @PWD@ (_tide_pwd) $add_newline \$$prompt_var[1][1]'$color_normal '
+end
+
+function fish_right_prompt
+    string unescape \"\$$prompt_var[1][2]$color_normal\"
+end"
+    end
+end
+
+# Inheriting instead of evaling because here load time is more important than runtime
+function _tide_on_fish_exit --on-event fish_exit --inherit-variable prompt_var
+    set -e $prompt_var
+end
+
+if test "$tide_prompt_transient_enabled" = true
+    function _tide_enter_transient
+        # If the commandline will be executed or is empty, and the pager is not open
+        # Pager open usually means selecting, not running
+        # Can be untrue, but it's better than the alternative
+        if commandline --is-valid || test -z "$(commandline)" && not commandline --paging-mode
+            set -g _tide_transient
+            set -g _tide_repaint
+            commandline -f repaint
+        end
+        commandline -f execute
+    end
+
+    bind \r _tide_enter_transient
+    bind \n _tide_enter_transient
+    bind -M insert \r _tide_enter_transient
+    bind -M insert \n _tide_enter_transient
 end
