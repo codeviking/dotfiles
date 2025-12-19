@@ -22,4 +22,15 @@ tide configure \
     --icons='Few icons' \
     --transient=No
 
+# Modify right prompt items
+set --universal tide_right_prompt_items \
+    status \
+    cmd_duration \
+    context jobs \
+    direnv \
+    node \
+    python \
+    go \
+    time
+
 echo "OK: fish specific installation steps complete"
