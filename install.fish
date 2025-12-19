@@ -11,7 +11,7 @@ fisher install IlanCosman/tide@v6
 # Configure tide
 tide configure \
     --auto \
-    --style=Slanted \
+    --style=Rainbow \
     --prompt_colors='True color' \
     --show_time='24-hour format' \
     --rainbow_prompt_separators=Angled \
