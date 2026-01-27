@@ -1,2 +1,7 @@
 config/ghostty/*.bak
 config/fish/fish_variables
+
+# These are changed by fisher's install. The first might be something to include.
+config/fish/fish_plugins
+config/fish/completions/fisher.fish
+config/fish/functions/fisher.fish
