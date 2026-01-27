@@ -41,8 +41,15 @@ if [ ! -L "$HOME/bin/python" ]
     ln -s "$(brew --prefix)/bin/python3.11" "$HOME/bin/python"
 end
 
-# gpg
+# Set GPG TTY
 set -x GPG_TTY (tty)
+
+# Launch gpg-agent and set the SSH_AUTH_SOCK
+gpgconf --launch gpg-agent
+
+# Ensure that GPG Agent is used as the SSH agent
+set -e SSH_AUTH_SOCK
+set -U -x SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
 
 # gcloud kubectl credentials
 set -x USE_GKE_GCLOUD_AUTH_PLUGIN True
