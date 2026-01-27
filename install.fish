@@ -4,6 +4,9 @@
 # which is part of install.sh
 #
 
+# Install fisher
+curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
+
 # Install tide theme
 # https://github.com/IlanCosman/tide
 fisher install IlanCosman/tide@v6
