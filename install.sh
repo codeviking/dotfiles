@@ -31,7 +31,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     cmctl \
     jsonnet \
     libpq \
-    velero \
+    awscli \
     tree \
     pstree \
     gh \
