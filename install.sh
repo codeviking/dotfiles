@@ -39,13 +39,16 @@ if [[ "$(uname)" == "Darwin" ]]; then
     pinentry-mac \
     grpcurl \
     gsed \
-    uv
+    uv \
+    ffmpeg \
+    derailed/k9s/k9s
 
   brew install --casks font-meslo-for-powerline \
     1password/tap/1password-cli \
     ghostty \
     rectangle \
-    docker-desktop
+    docker-desktop \
+    gcloud-cli
 
   brew tap hashicorp/tap
   brew install hashicorp/tap/terraform
