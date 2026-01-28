@@ -51,13 +51,7 @@ gpgconf --launch gpg-agent
 set -e SSH_AUTH_SOCK
 set -U -x SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
 
-# gcloud kubectl credentials
-set -x USE_GKE_GCLOUD_AUTH_PLUGIN True
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/opt/google-cloud-sdk/path.fish.inc" ]
-    source "$HOME/opt/google-cloud-sdk/path.fish.inc"
-end
 
 # M1
 set -x GOARCH arm64
@@ -72,8 +66,8 @@ set -x VIRTUAL_ENV_DISABLE_PROMPT 1
 set fish_greeting
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/sams/opt/google-cloud-sdk/path.fish.inc' ]
-    source '/Users/sams/opt/google-cloud-sdk/path.fish.inc'
+if [ -f "$(brew --prefix)/google-cloud-sdk/path.fish.inc" ]
+    source "$(brew --prefix)/google-cloud-sdk/path.fish.inc"
 end
 
 # bun
@@ -93,3 +87,6 @@ end
 
 # This disables the user@host prompt, which isn't very helpful
 set -g DEFAULT_USER $(whoami)
+
+# Set XDG_CONFIG_HOME; for my purposes this is for loading k9s settings
+set -x XDG_CONFIG_HOME $HOME/.config
