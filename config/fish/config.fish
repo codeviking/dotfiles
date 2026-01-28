@@ -42,19 +42,23 @@ if [ ! -L "$HOME/bin/python" ]
 end
 
 # Set GPG TTY
-set -x GPG_TTY (tty)
+set -gx GPG_TTY (tty)
+
+# Update the GPG_TTY whenever a command is executed so that it's kept in sync
+function update_gpg_tty --on-event fish_preexec
+    set -gx GPG_TTY (tty)
+    gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
+end
 
 # Launch gpg-agent and set the SSH_AUTH_SOCK
 gpgconf --launch gpg-agent
 
 # Ensure that GPG Agent is used as the SSH agent
-set -e SSH_AUTH_SOCK
 set -U -x SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
 
-
-
-# M1
-set -x GOARCH arm64
+# Default go builds to arm64
+set -gx GOARCH arm64
+set -gx GOOS darwin
 
 # Add SSH key to SSH agent
 ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" 2>/dev/null
@@ -77,16 +81,16 @@ set --export PATH $BUN_INSTALL/bin $PATH
 # fix remote terminal when using ghostty
 set --export TERM xterm-256color
 
-# add `uv` binaries to the path
-fish_add_path /Users/sams/.local/bin
+# add local binaries to the path
+fish_add_path $HOME/.local/bin
 
 # secrets that are exported in all shells
 if [ -f "$HOME/.secret/fish/shell.fish" ]
     source "$HOME/.secret/fish/shell.fish"
 end
 
-# This disables the user@host prompt, which isn't very helpful
+# this disables the user@host prompt, which isn't very helpful
 set -g DEFAULT_USER $(whoami)
 
-# Set XDG_CONFIG_HOME; for my purposes this is for loading k9s settings
-set -x XDG_CONFIG_HOME $HOME/.config
+# set XDG_CONFIG_HOME; for my purposes this is for loading k9s settings
+set -gx XDG_CONFIG_HOME $HOME/.config
