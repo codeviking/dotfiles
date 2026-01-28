@@ -12,4 +12,7 @@ cat > ~/.gnupg/gpg-agent.conf <<EOF
   use-standard-socket
 EOF
 
-echo "use-agent" > ~/.gnupg/gpg.conf
+cat > ~/.gnupg/gpg.conf << EOF
+  use-agent
+  batch
+EOF
