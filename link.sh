@@ -33,7 +33,11 @@ done
 
 # Symlink things that don't live in ~/.config
 if [[ ! -L "$HOME/.tmux.conf" ]]; then
-    ln -s $dir/tmux/tmux.conf ~/.tmux.conf
+    ln -s $dir/tmux/tmux.conf "$HOME/.tmux.conf"
+fi
+
+if [[ ! -L "$HOME/.kube/kubie.yaml" ]]; then
+    ln -s $dir/kubie/kubie.yaml "$HOME/.kube/kubie.yaml"
 fi
 
 # Silence iTerm login message

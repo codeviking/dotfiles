@@ -41,7 +41,8 @@ if [[ "$(uname)" == "Darwin" ]]; then
     gsed \
     uv \
     ffmpeg \
-    derailed/k9s/k9s
+    derailed/k9s/k9s \
+    kubie
 
   brew install --casks font-meslo-for-powerline \
     1password/tap/1password-cli \
@@ -78,5 +79,8 @@ curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fi
 
 # Enable corepack (and thereby yarn)
 corepack enable
+
+# Install rust toolchain
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 echo "OK: install complete"

@@ -34,6 +34,7 @@ set --universal tide_right_prompt_items \
     node \
     python \
     go \
-    time
+    time \
+    kubectl
 
 echo "OK: fish specific installation steps complete"

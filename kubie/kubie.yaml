@@ -1,0 +1,3 @@
+prompt:
+  # Don't show k8s context, as tide does that
+  disable: true
