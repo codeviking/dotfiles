@@ -2,6 +2,11 @@
 #
 # System wide fish configuration.
 #
+if defaults read -g AppleInterfaceStyle >/dev/null 2>&1
+  fish_config theme choose catppuccin-mocha --color-theme=light
+else
+  fish_config theme choose catppuccin-mocha --color-theme=light
+end
 
 set -x LANG en_US.UTF-8
 
@@ -50,18 +55,12 @@ function update_gpg_tty --on-event fish_preexec
     gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 end
 
-# Launch gpg-agent and set the SSH_AUTH_SOCK
-gpgconf --launch gpg-agent
-
 # Ensure that GPG Agent is used as the SSH agent
 set -U -x SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
 
 # Default go builds to arm64
 set -gx GOARCH arm64
 set -gx GOOS darwin
-
-# Add SSH key to SSH agent
-ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" 2>/dev/null
 
 # Disable default venv prompt
 set -x VIRTUAL_ENV_DISABLE_PROMPT 1
@@ -84,6 +83,9 @@ set --export TERM xterm-256color
 # add local binaries to the path
 fish_add_path $HOME/.local/bin
 
+# add cargo/bin
+fish_add_path $HOME/.cargo/bin
+
 # secrets that are exported in all shells
 if [ -f "$HOME/.secret/fish/shell.fish" ]
     source "$HOME/.secret/fish/shell.fish"
@@ -94,3 +96,5 @@ set -g DEFAULT_USER $(whoami)
 
 # set XDG_CONFIG_HOME; for my purposes this is for loading k9s settings
 set -gx XDG_CONFIG_HOME $HOME/.config
+
+fish_add_path $HOME/bin

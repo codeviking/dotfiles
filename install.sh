@@ -42,7 +42,13 @@ if [[ "$(uname)" == "Darwin" ]]; then
     uv \
     ffmpeg \
     derailed/k9s/k9s \
-    kubie
+    kubie \
+    watch \
+    withgraphite/tap/graphite \
+    fd \
+    oci-cli \
+    depot/tap/depot \
+    helm
 
   brew install --casks font-meslo-for-powerline \
     1password/tap/1password-cli \
@@ -70,8 +76,10 @@ npm install -g pyright \
   typescript-language-server \
   bash-language-server \
   vscode-langservers-extracted \
-  dockerfile-language-server-nodejs \
-  @anthropic-ai/claude-code
+  dockerfile-language-server-nodejs
+
+# Install claude code native binary
+curl -fsSL https://claude.ai/install.sh | bash
 
 # Install fisher
 # https://github.com/jorgebucaran/fisher

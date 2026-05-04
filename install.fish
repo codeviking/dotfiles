@@ -10,20 +10,14 @@ curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fi
 # Install tide theme
 # https://github.com/IlanCosman/tide
 fisher install IlanCosman/tide@v6
+fisher install dracula/fish
+fisher install catppuccin/fish
 
 # Configure tide
-tide configure \
-    --auto \
-    --style=Rainbow \
-    --prompt_colors='True color' \
-    --show_time='24-hour format' \
-    --rainbow_prompt_separators=Angled \
-    --powerline_prompt_heads=Sharp \
-    --powerline_prompt_tails=Flat \
-    --powerline_prompt_style='One line' \
-    --prompt_spacing=Compact \
-    --icons='Few icons' \
-    --transient=No
+tide configure --auto --style=Lean --prompt_colors='True color' \
+  --show_time=No --lean_prompt_height='Two lines' \
+  --prompt_connection=Disconnected --prompt_spacing=Compact \
+  --icons='Few icons' --transient=No
 
 # Modify right prompt items
 set --universal tide_right_prompt_items \
