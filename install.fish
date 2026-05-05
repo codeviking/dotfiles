@@ -63,7 +63,8 @@ end
 brew tap hashicorp/tap
 brew install hashicorp/tap/terraform
 
-(brew --prefix)/opt/fzf/install --all
+set -l brew_prefix (brew --prefix)
+$brew_prefix/opt/fzf/install --all
 
 # --- 2. Link configuration files into ~/.config and friends ---
 
