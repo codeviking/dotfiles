@@ -37,7 +37,7 @@ brew install \
     gsed \
     uv \
     ffmpeg \
-    derailed/k9s/k9s \
+    k9s \
     kubie \
     watch \
     withgraphite/tap/graphite \
@@ -64,7 +64,11 @@ brew tap hashicorp/tap
 brew install hashicorp/tap/terraform
 
 set -l brew_prefix (brew --prefix)
-$brew_prefix/opt/fzf/install --all
+if test -x $brew_prefix/opt/fzf/install
+    $brew_prefix/opt/fzf/install --all
+else
+    echo "fzf install script not found at $brew_prefix/opt/fzf/install; skipping integration"
+end
 
 # --- 2. Link configuration files into ~/.config and friends ---
 
@@ -128,11 +132,24 @@ end
 
 # --- 5. Fisher + tide ---
 
-curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
-fisher install jorgebucaran/fisher
-fisher install IlanCosman/tide@v6
-fisher install dracula/fish
-fisher install catppuccin/fish
+if not type -q fisher
+    curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+    fisher install jorgebucaran/fisher
+end
+
+function _fisher_install_if_missing
+    set -l plugin $argv[1]
+    set -l key (string split -m1 '@' $plugin)[1]
+    if fisher list 2>/dev/null | grep -i -q -x -F -- $key
+        echo "fisher: $plugin already installed, skipping"
+    else
+        fisher install $plugin
+    end
+end
+
+_fisher_install_if_missing IlanCosman/tide@v6
+_fisher_install_if_missing dracula/fish
+_fisher_install_if_missing catppuccin/fish
 
 tide configure --auto --style=Lean --prompt_colors='True color' \
     --show_time=No --lean_prompt_height='Two lines' \

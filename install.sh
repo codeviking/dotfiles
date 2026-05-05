@@ -13,5 +13,9 @@ if ! command -v fish &>/dev/null; then
   brew install fish
 fi
 
+# Make sure brew's bin/sbin are on PATH for the fish process below — otherwise
+# go/npm/corepack (installed by install.fish) won't be found in this session.
+eval "$(brew shellenv)"
+
 dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 exec fish "$dir/install.fish"
