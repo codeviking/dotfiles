@@ -4,7 +4,7 @@ This repository captures what's required to configure my development environment
 
 ## Prerequisites
 
-Before getting started, install [brew](https://brew.sh).
+Before getting started, install [brew](https://brew.sh) (Homebrew on macOS, Linuxbrew on Linux).
 
 ## Usage
 
@@ -12,29 +12,19 @@ To setup a new environment:
 
 ```bash
 git clone git@github.com:codeviking/dotfiles.git
-
-# Install required packages
+cd dotfiles
 ./install.sh
-
-# Add fish as a shell candidate by appending it to /etc/shells
-sudo echo "$(brew --prefix)/bin/fish" >> /etc/shells
-
-# Change the default shell to fish.
-chsh -s "$(brew --prefix)/bin/fish"
 ```
 
-Once that's complete launch a new terminal and run:
+The `install.sh` script bootstraps fish, then hands off to `install.fish` which runs the rest of the pipeline. It's safe to re-run.
+
+After install, interactive bash sessions will drop into fish automatically. If you'd rather make fish the actual login shell (and you have sudo), run:
 
 ```bash
-# Fish specific installation steps
-./install.fish
-
-# Link configuration files into expected locations.
-./link.sh
-
-# Configure git
-./gitconf.sh
+./shell.sh
 ```
+
+This adds fish to `/etc/shells` and runs `chsh`. Skip it in environments where you don't own the workspace template.
 
 You should now see something like this whenever you start a new terminal:
 

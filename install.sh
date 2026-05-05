@@ -1,94 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-# General installation and setup.
+# Bootstrap fish, then hand off to install.fish for the rest of the install.
 
-# If we're on MacOS use brew to install a bunch of packages.
-if [[ "$(uname)" == "Darwin" ]]; then
-  if ! command -v brew &>/dev/null; then
-    echo "Error: brew isn't installed."
-    exit 1
-  fi
-
-  brew install \
-    nvim \
-    jq \
-    yq \
-    python \
-    go \
-    node \
-    corepack \
-    coreutils \
-    fish \
-    fzf \
-    kubectl \
-    ripgrep \
-    mosh \
-    blueutil \
-    shellcheck \
-    curl \
-    wget \
-    cmctl \
-    jsonnet \
-    libpq \
-    awscli \
-    tree \
-    pstree \
-    gh \
-    gpg \
-    pinentry-mac \
-    grpcurl \
-    gsed \
-    uv \
-    ffmpeg \
-    derailed/k9s/k9s \
-    kubie \
-    watch \
-    withgraphite/tap/graphite \
-    fd \
-    oci-cli \
-    depot/tap/depot \
-    helm
-
-  brew install --casks font-meslo-for-powerline \
-    1password/tap/1password-cli \
-    ghostty \
-    rectangle \
-    docker-desktop \
-    gcloud-cli
-
-  brew tap hashicorp/tap
-  brew install hashicorp/tap/terraform
-
-  "$(brew --prefix)"/opt/fzf/install --all
-else
-  # TODO: Add equivalent commands for other operating systems
-  echo "Warning: The host os isn't MacOS, some packages won't be installed"
+if ! command -v brew &>/dev/null; then
+  echo "Error: brew isn't installed. Install Homebrew/Linuxbrew first: https://brew.sh"
+  exit 1
 fi
 
-# Language server installation
-# See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+if ! command -v fish &>/dev/null; then
+  echo "Installing fish..."
+  brew install fish
+fi
 
-go install golang.org/x/tools/gopls@latest
-
-npm install -g pyright \
-  typescript \
-  typescript-language-server \
-  bash-language-server \
-  vscode-langservers-extracted \
-  dockerfile-language-server-nodejs
-
-# Install claude code native binary
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Install fisher
-# https://github.com/jorgebucaran/fisher
-curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
-
-# Enable corepack (and thereby yarn)
-corepack enable
-
-# Install rust toolchain
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-echo "OK: install complete"
+dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec fish "$dir/install.fish"

@@ -2,10 +2,14 @@
 #
 # System wide fish configuration.
 #
-if defaults read -g AppleInterfaceStyle >/dev/null 2>&1
-  fish_config theme choose catppuccin-mocha --color-theme=light
+if test (uname) = Darwin
+    if defaults read -g AppleInterfaceStyle >/dev/null 2>&1
+        fish_config theme choose catppuccin-mocha --color-theme=light
+    else
+        fish_config theme choose catppuccin-mocha --color-theme=light
+    end
 else
-  fish_config theme choose catppuccin-mocha --color-theme=light
+    fish_config theme choose catppuccin-mocha --color-theme=light
 end
 
 set -x LANG en_US.UTF-8
@@ -38,12 +42,14 @@ fish_add_path "$(brew --prefix)/opt/libpq/bin"
 fish_add_path "$(brew --prefix)/sbin"
 
 # Override MacOS python3 installation
-mkdir -p "$HOME/bin"
-if [ ! -L "$HOME/bin/python3" ]
-    ln -s "$(brew --prefix)/bin/python3.11" "$HOME/bin/python3"
-end
-if [ ! -L "$HOME/bin/python" ]
-    ln -s "$(brew --prefix)/bin/python3.11" "$HOME/bin/python"
+if test (uname) = Darwin
+    mkdir -p "$HOME/bin"
+    if [ ! -L "$HOME/bin/python3" ]
+        ln -s "$(brew --prefix)/bin/python3.11" "$HOME/bin/python3"
+    end
+    if [ ! -L "$HOME/bin/python" ]
+        ln -s "$(brew --prefix)/bin/python3.11" "$HOME/bin/python"
+    end
 end
 
 # Set GPG TTY
@@ -58,9 +64,11 @@ end
 # Ensure that GPG Agent is used as the SSH agent
 set -U -x SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
 
-# Default go builds to arm64
-set -gx GOARCH arm64
-set -gx GOOS darwin
+# Default go builds to host arm64-darwin (override only on macOS)
+if test (uname) = Darwin
+    set -gx GOARCH arm64
+    set -gx GOOS darwin
+end
 
 # Disable default venv prompt
 set -x VIRTUAL_ENV_DISABLE_PROMPT 1
