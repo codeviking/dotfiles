@@ -190,4 +190,13 @@ corepack enable
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
+# --- 10. tree-sitter CLI (Linux only) ---
+# Build via cargo against system glibc — Linuxbrew's tree-sitter is linked
+# against a newer glibc than Ubuntu 22.04 ships, which breaks nvim-treesitter.
+# On macOS the brew build is fine.
+
+if test "$os" != Darwin
+    $HOME/.cargo/bin/cargo install tree-sitter-cli
+end
+
 echo "OK: install complete"
