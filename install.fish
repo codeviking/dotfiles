@@ -63,13 +63,6 @@ end
 brew tap hashicorp/tap
 brew install hashicorp/tap/terraform
 
-set -l brew_prefix (brew --prefix)
-if test -x $brew_prefix/opt/fzf/install
-    $brew_prefix/opt/fzf/install --all
-else
-    echo "fzf install script not found at $brew_prefix/opt/fzf/install; skipping integration"
-end
-
 # --- 2. Link configuration files into ~/.config and friends ---
 
 mkdir -p $HOME/.config
