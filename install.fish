@@ -118,10 +118,23 @@ end
 # (e.g. Coder), this hands any interactive bash session off to fish.
 
 set -l bashrc $HOME/.bashrc
-set -l marker "# dotfiles: hand off to fish for interactive bash sessions"
-if not test -f $bashrc; or not grep -qF "$marker" $bashrc
-    printf '\n%s\nif [ -z "$FISH_VERSION" ] && [ -t 1 ] && command -v fish >/dev/null; then\n  exec fish\nfi\n' "$marker" >> $bashrc
+set -l begin_marker "# dotfiles:fish-handoff:begin"
+set -l end_marker "# dotfiles:fish-handoff:end"
+
+# Strip any prior block (legacy single-marker form or current begin/end form)
+# so we can re-write the snippet idempotently across versions.
+if test -f $bashrc
+    if grep -qF "$begin_marker" $bashrc
+        sed -i.bak "/$begin_marker/,/$end_marker/d" $bashrc
+        rm -f $bashrc.bak
+    end
+    if grep -qF "# dotfiles: hand off to fish for interactive bash sessions" $bashrc
+        sed -i.bak "/# dotfiles: hand off to fish for interactive bash sessions/,/^fi\$/d" $bashrc
+        rm -f $bashrc.bak
+    end
 end
+
+printf '\n%s\nif [ -z "$FISH_VERSION" ] && [ -t 1 ]; then\n  for fish_bin in /home/linuxbrew/.linuxbrew/bin/fish /opt/homebrew/bin/fish "$(command -v fish 2>/dev/null)"; do\n    [ -x "$fish_bin" ] && exec "$fish_bin"\n  done\nfi\n%s\n' "$begin_marker" "$end_marker" >> $bashrc
 
 # --- 5. Fisher + tide ---
 
