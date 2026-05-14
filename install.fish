@@ -205,4 +205,10 @@ if test "$os" != Darwin
     $HOME/.cargo/bin/cargo install tree-sitter-cli
 end
 
+# --- 10. Notion CLI ---
+
+if not type -q ntn
+    curl -fsSL https://ntn.dev | bash
+end
+
 echo "OK: install complete"
